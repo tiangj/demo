@@ -16,7 +16,7 @@ public class TestController {
     @RequestMapping("getuser")
     public User getUser() {
         User user = new User();
-        user.setName("test");
+        user.setName("test1");
         return user;
     }
 }
