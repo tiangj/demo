@@ -4,7 +4,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-//import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Created by tian on 2018/12/24.
@@ -16,8 +15,17 @@ public class LoginController {
     @RequestMapping("/signIn")
     @ResponseBody
     public String signIn(String name,String password){
+        return "1";
+    }
 
-        return "";
+    @RequestMapping("/index")
+    public String index(){
+        return "index";
+    }
+
+    @RequestMapping("/welcome")
+    public String welcome(){
+        return "welcome";
     }
 
     @RequestMapping("/")
