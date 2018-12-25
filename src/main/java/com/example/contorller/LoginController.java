@@ -16,8 +16,7 @@ public class LoginController {
     @RequestMapping("/signIn")
     @ResponseBody
     public String signIn(String name,String password){
-        System.out.println("123");
-        return null;
+        return "";
     }
 
     @RequestMapping("/")

@@ -24,11 +24,11 @@
 
         
         <form method="post" class="layui-form" >
-            <input name="username" placeholder="用户名"  type="text" lay-verify="required" class="layui-input" >
+            <input name="name" placeholder="用户名"  type="text" lay-verify="required" class="layui-input" >
             <hr class="hr15">
             <input name="password" lay-verify="required" placeholder="密码"  type="password" class="layui-input">
             <hr class="hr15">
-            <input value="登录" lay-submit lay-filter="login" style="width:100%;" type="submit">
+            <input value="登录" lay-submit lay-filter="signIn" style="width:100%;" type="submit">
             <hr class="hr20" >
         </form>
     </div>
@@ -42,17 +42,25 @@
               //   });
               //监听提交
               form.on('submit(signIn)', function(data){
-                 location.href='index.html'
-                 alert(888);
-                 layer.msg(JSON.stringify(data.field),function(){
-                    location.href='index.html'
-                 });
+                  $.ajax({
+                      url:'/demo/signIn',
+                      method:'post',
+                      data:data.field,
+                      dataType:'JSON',
+                      success:function(res){
+                          location.href='index.html'
+                      }
+                  }) ;
+
+//                 layer.msg(JSON.stringify(data.field),function(){
+//                    location.href='index.html'
+//                 });
                  return false;
               });
             });
         })
 
-        
+
     </script>
 
     
