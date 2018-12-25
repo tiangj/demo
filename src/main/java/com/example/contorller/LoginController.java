@@ -15,6 +15,7 @@ public class LoginController {
     @RequestMapping("/signIn")
     @ResponseBody
     public String signIn(String name,String password){
+
         return "1";
     }
 
