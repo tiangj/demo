@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/test")
 public class TestController {
 
-    @RequestMapping("getuser")
+    @RequestMapping(" ")
     public User getUser() {
         User user = new User();
         user.setName("test1");
