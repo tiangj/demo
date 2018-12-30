@@ -43,7 +43,7 @@ $(function () {
                     for (var j=0;j<res.secondMenusList.length;j++){
                         if(res.secondMenusList[j].parent_id==res.firstMenusList[i].menuId){
                             html+='<li>' +
-                                ' <a _href="'+res.secondMenusList[j].href+'">' +
+                                ' <a _href="'+ctxPath+res.secondMenusList[j].href+'">' +
                                 ' <i class="iconfont">&#xe6a7;</i>' +
                                 ' <cite>'+res.secondMenusList[j].menuName+'</cite>' +
                                 ' </a>' +

@@ -17,5 +17,13 @@ import org.springframework.stereotype.Controller;
 @RequestMapping("/sysRole")
 public class SysRoleController {
 
+    /****
+     * 跳转至权限list
+     * @return
+     */
+    @RequestMapping("list")
+    public String list(){
+       return "sys/roleList";
+    }
 }
 

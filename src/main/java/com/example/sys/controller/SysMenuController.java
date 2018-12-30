@@ -26,6 +26,15 @@ public class SysMenuController {
     private ISysMenuService sysMenuService;
 
     /****
+     * 跳转至菜单list
+     * @return
+     */
+    @RequestMapping("list")
+    public String list(){
+        return "sys/menuList";
+    }
+
+    /****
      * 根据用户id获取菜单信息
      * @return
      */

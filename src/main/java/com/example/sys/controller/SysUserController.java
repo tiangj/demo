@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/sysUser")
 public class SysUserController {
 
-    @RequestMapping("toUserList")
+
+    @RequestMapping("list")
     public String toUserList(){
         return "sys/userList";
     }
