@@ -21,13 +21,19 @@ $(function () {
         }
     };
 
+    var userId=$("#userId").val();
+
+    if(userId==''){
+        location.href=ctxPath;
+    }
+
     /*****
      * 根据用户id获取菜单信息
      */
     $.ajax({
         url:ctxPath+'/sysMenu/getMenusByUserId',
         method:'post',
-        data:{userId:$("#userId").val()},
+        data:{userId:userId},
         dataType:'JSON',
         success:function(res){
             var html="";
