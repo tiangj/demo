@@ -60,8 +60,14 @@ public class LoginController {
         return "index";
     }
 
+    @RequestMapping("/welcome")
+    public String welcome(){
+        return "welcome";
+    }
+
     @RequestMapping("/")
     public String toLogin(){
         return "login";
     }
+
 }
