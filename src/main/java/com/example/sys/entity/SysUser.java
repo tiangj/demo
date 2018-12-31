@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 
@@ -60,6 +62,7 @@ public class SysUser extends Model<SysUser> {
     private String loginFlag;
     @TableField("create_by")
     private String createBy;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @TableField("create_date")
     private Date createDate;
     @TableField("update_by")

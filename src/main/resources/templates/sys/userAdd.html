@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+    <script th:src="@{/sys/userAdd.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/font.css}">
+    <link rel="stylesheet" th:href="@{/css/xadmin.css}">
+    <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}">
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        ctxPath = /*[[@{/}]]*/ '';
+        /*]]>*/
+        console.info(ctxPath);
+    </script>
+</head>
+<body>
+<div class="x-body layui-anim layui-anim-up">
+    <form class="layui-form" th:object="${sysUser}">
+        <input type="hidden" id="id" th:field="*{id}">
+        <div class="layui-form-item">
+            <label for="L_loginName" class="layui-form-label">
+                <span class="x-red">*</span>登录名
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="L_loginName" name="loginName" required=""
+                       autocomplete="off" class="layui-input" th:field="*{loginName}">
+            </div>
+
+        </div>
+        <div class="layui-form-item">
+            <label for="L_name" class="layui-form-label">
+                <span class="x-red">*</span>昵称
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="L_name" name="name" required="" lay-verify="nikename"
+                       autocomplete="off" class="layui-input" th:field="*{name}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="L_pass" class="layui-form-label">
+                <span class="x-red">*</span>密码
+            </label>
+            <div class="layui-input-inline">
+                <input type="password" id="L_pass" name="password" required="" lay-verify="pass"
+                       autocomplete="off" class="layui-input" th:field="*{password}">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                6到16个字符
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="L_repass" class="layui-form-label">
+                <span class="x-red">*</span>确认密码
+            </label>
+            <div class="layui-input-inline">
+                <input type="password" id="L_repass" name="repass" required="" lay-verify="repass"
+                       autocomplete="off" class="layui-input" th:field="*{password}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="L_repass" class="layui-form-label">
+            </label>
+            <button  class="layui-btn" lay-filter="add" lay-submit="">
+                增加
+            </button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
