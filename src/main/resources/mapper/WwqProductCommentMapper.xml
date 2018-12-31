@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.wwq.mapper.WwqProductCommentMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.wwq.entity.WwqProductComment">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="content" property="content" />
+        <result column="product_id" property="productId" />
+        <result column="praise" property="praise" />
+        <result column="remark" property="remark" />
+        <result column="create_date" property="createDate" />
+        <result column="create_user" property="createUser" />
+        <result column="update_date" property="updateDate" />
+        <result column="update_user" property="updateUser" />
+        <result column="deleteFlag" property="deleteFlag" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id AS userId, content, product_id AS productId, praise, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, deleteFlag
+    </sql>
+
+    <select id="shopProductCommentList" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT
+        spc.id,
+        spc.content,
+        spc.praise,
+        spc.create_date,
+        su.nickname,
+        su.headimgurl
+        FROM
+        wwq_product_comment AS spc
+        LEFT JOIN wwq_user AS su ON su.id = spc.user_id
+        where spc.deleteFlag = 0 and spc.product_id = #{id}
+        <if test="praise != 0" >
+            and spc.praise = #{praise}
+        </if>
+    </select>
+
+    <select id="shopProductGoodCommentNum"  resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT
+          COUNT(spc.id) num
+        FROM wwq_product_comment AS spc where spc.deleteFlag = 0 and spc.product_id = #{id} and spc.praise = #{praise}
+    </select>
+
+    <insert id="addShopProductComment" parameterType="com.example.wwq.entity.WwqProductComment">
+          insert `wwq_product_comment`(`id`,`user_id`,`content`,`product_id`,`praise`,`create_date`,`create_user`,`update_date`,`update_user`,`deleteFlag`)
+          values(#{id},#{userId},#{content},#{productId},#{praise},#{createDate},#{createUser},#{updateDate},#{updateUser},#{deleteFlag});
+    </insert>
+</mapper>

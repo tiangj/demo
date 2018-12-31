@@ -38,9 +38,7 @@ public class SysMenuController {
      * 根据用户id获取菜单信息
      * @return
      */
-    @ResponseBody
-    @RequestMapping("getMenusByUserId")
-    public Map<String,Object> getMenusByUserId(String userId){
+  Map<String,Object> getMenusByUserId(String userId){
         return sysMenuService.getMenusByUserId(userId);
     }
 

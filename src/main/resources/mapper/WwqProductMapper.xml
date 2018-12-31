@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.wwq.mapper.WwqProductMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.wwq.entity.WwqProduct">
+        <id column="id" property="id" />
+        <result column="product_name" property="productName" />
+        <result column="product_orgin_price" property="productOrginPrice" />
+        <result column="product_now_price" property="productNowPrice" />
+        <result column="product_num" property="productNum" />
+        <result column="post_price" property="postPrice" />
+        <result column="recommend_brand" property="recommendBrand" />
+        <result column="sell_num" property="sellNum" />
+        <result column="remain_num" property="remainNum" />
+        <result column="product_dec" property="productDec" />
+        <result column="sort_id" property="sortId" />
+        <result column="scope_id" property="scopeId" />
+        <result column="sort" property="sort" />
+        <result column="remark" property="remark" />
+        <result column="create_date" property="createDate" />
+        <result column="create_user" property="createUser" />
+        <result column="update_date" property="updateDate" />
+        <result column="update_user" property="updateUser" />
+        <result column="deleteFlag" property="deleteFlag" />
+        <result column="recommend_boutique" property="recommendBoutique" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, product_name AS productName, product_orgin_price AS productOrginPrice, product_now_price AS productNowPrice, product_num AS productNum, post_price AS postPrice, recommend_brand AS recommendBrand, sell_num AS sellNum, remain_num AS remainNum, product_dec AS productDec, sort_id AS sortId, scope_id AS scopeId, sort, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, deleteFlag, recommend_boutique AS recommendBoutique
+    </sql>
+
+
+    <select id="shopProductList" resultType="java.util.Map" parameterType="java.util.Map">
+          SELECT
+			sp.id,
+			sp.product_name,
+			sp.product_now_price,
+			sp.product_orgin_price,
+			CONCAT(#{fileHead},spf.file_path) as file_path
+		FROM
+			wwq_product AS sp
+		LEFT JOIN wwq_product_file AS spf ON sp.id = spf.product_id and spf.file_type = 0
+		LEFT JOIN wwq_sort as ss1 on ss1.id = sp.sort_id
+		WHERE sp.deleteFlag = 0
+		and spf.deleteFlag = 0
+		and ss1.id = #{sortId}
+    </select>
+
+
+    <select id="shopRecommended" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT
+			sp.id,
+			sp.product_name,
+			sp.product_now_price,
+			sp.product_orgin_price,
+			sp.create_date,
+			CONCAT(#{fileHead},spf.file_path) as file_path
+		FROM
+			wwq_product AS sp
+		LEFT JOIN wwq_product_file AS spf ON sp.id = spf.product_id and spf.file_type = 0
+		WHERE sp.deleteFlag = 0
+		and spf.deleteFlag = 0
+		<if test="type == 1">
+            and sp.recommend_boutique=1
+        </if>
+        <if test="type == 2">
+            and sp.recommend_brand=1
+        </if>
+    </select>
+
+
+    <select id="searchShopProductList" resultType="java.util.Map" parameterType="java.util.Map">
+          SELECT
+			sp.id,
+			sp.product_name,
+			sp.product_now_price,
+			sp.product_orgin_price,
+			CONCAT(#{fileHead},spf.file_path) as file_path
+		FROM
+			wwq_product AS sp
+		LEFT JOIN wwq_product_file AS spf ON sp.id = spf.product_id
+		WHERE sp.deleteFlag = 0
+		and spf.deleteFlag = 0
+		and sp.product_name like CONCAT('%',#{productName},'%')
+    </select>
+
+    <select id="shopProductListInfo" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT
+            wp.id,wp.`product_name`,
+            CONCAT(#{fileHead},wpf.file_path) as file_path,
+            wp.`product_dec`,wp.`product_orgin_price` ,
+            wp.`product_now_price`,
+            wp.`sell_num`,
+            wp.`remain_num`,
+            wp.`post_price`,
+            wp.product_type
+        FROM `wwq_product` as wp LEFT JOIN `wwq_product_file` as wpf on wpf.`product_id` = wp.`id` and wpf.`deleteFlag` =0 and wpf.`file_type` = 0
+        where wp.id =#{id} and wp.`deleteFlag` =0
+    </select>
+
+</mapper>

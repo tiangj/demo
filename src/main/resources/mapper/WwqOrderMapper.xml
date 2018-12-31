@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.wwq.mapper.WwqOrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.wwq.entity.WwqOrder">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="product_id" property="productId" />
+        <result column="product_type_id" property="productTypeId" />
+        <result column="product_cupon_id" property="productCuponId" />
+        <result column="order_num" property="orderNum" />
+        <result column="order_total_price" property="orderTotalPrice" />
+        <result column="order_real_price" property="orderRealPrice" />
+        <result column="post_way_type" property="postWayType" />
+        <result column="post_date_id" property="postDateId" />
+        <result column="consume_point" property="consumePoint" />
+        <result column="message" property="message" />
+        <result column="order_status" property="orderStatus" />
+        <result column="pay_status" property="payStatus" />
+        <result column="pay_way" property="payWay" />
+        <result column="remark" property="remark" />
+        <result column="create_date" property="createDate" />
+        <result column="create_user" property="createUser" />
+        <result column="update_date" property="updateDate" />
+        <result column="update_user" property="updateUser" />
+        <result column="delete_flag" property="deleteFlag" />
+        <result column="address_id" property="addressId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id AS userId, product_id AS productId, product_type_id AS productTypeId, product_cupon_id AS productCuponId, order_num AS orderNum, order_total_price AS orderTotalPrice, order_real_price AS orderRealPrice, post_way_type AS postWayType, post_date_id AS postDateId, consume_point AS consumePoint, message, order_status AS orderStatus, pay_status AS payStatus, pay_way AS payWay, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, delete_flag AS deleteFlag, address_id AS addressId
+    </sql>
+
+</mapper>

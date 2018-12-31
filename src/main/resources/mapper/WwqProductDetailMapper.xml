@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.wwq.mapper.WwqProductDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.wwq.entity.WwqProductDetail">
+        <id column="id" property="id" />
+        <result column="shop_product_id" property="shopProductId" />
+        <result column="post_way_id" property="postWayId" />
+        <result column="delivery_area_id" property="deliveryAreaId" />
+        <result column="remark" property="remark" />
+        <result column="create_date" property="createDate" />
+        <result column="create_user" property="createUser" />
+        <result column="update_date" property="updateDate" />
+        <result column="updata_user" property="updataUser" />
+        <result column="deleteFlag" property="deleteFlag" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, shop_product_id AS shopProductId, post_way_id AS postWayId, delivery_area_id AS deliveryAreaId, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, updata_user AS updataUser, deleteFlag
+    </sql>
+
+</mapper>

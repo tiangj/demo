@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.wwq.mapper.WwqPayMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.wwq.entity.WwqPay">
+        <id column="id" property="id" />
+        <result column="product_type_id" property="productTypeId" />
+        <result column="product_id" property="productId" />
+        <result column="pay_name" property="payName" />
+        <result column="total_price" property="totalPrice" />
+        <result column="pay_status" property="payStatus" />
+        <result column="remark" property="remark" />
+        <result column="create_date" property="createDate" />
+        <result column="create_user" property="createUser" />
+        <result column="update_date" property="updateDate" />
+        <result column="update_user" property="updateUser" />
+        <result column="deleteFlag" property="deleteFlag" />
+        <result column="user_id" property="userId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, product_type_id AS productTypeId, product_id AS productId, pay_name AS payName, total_price AS totalPrice, pay_status AS payStatus, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, deleteFlag, user_id AS userId
+    </sql>
+
+</mapper>
