@@ -24,4 +24,6 @@ public interface WwqProductMapper extends BaseMapper<WwqProduct> {
     List<Map<String,Object>> searchShopProductList(Map<String,Object> map);
 
     Map<String,Object> shopProductListInfo(Map<String,Object> map);
+
+    WwqProduct selectProductInfoByKey(String id);
 }

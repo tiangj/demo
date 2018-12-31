@@ -22,4 +22,11 @@
         id, user_id AS userId, level, level_name AS levelName, member_power AS memberPower, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, is_del AS isDel
     </sql>
 
+
+    <select id="selectProductInfoByUserKey" parameterType="java.lang.String" resultType="com.example.wwq.entity.WwqMember">
+          select * from wwq_member where user_id = #{userId} and is_del = 0
+    </select>
+
+
+
 </mapper>

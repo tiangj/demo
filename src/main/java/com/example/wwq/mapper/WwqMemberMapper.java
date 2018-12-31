@@ -13,4 +13,8 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
  */
 public interface WwqMemberMapper extends BaseMapper<WwqMember> {
 
+
+    WwqMember selectProductInfoByUserKey(String userId);
+
+
 }

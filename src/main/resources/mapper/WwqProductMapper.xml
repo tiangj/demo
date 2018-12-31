@@ -100,4 +100,8 @@
         where wp.id =#{id} and wp.`deleteFlag` =0
     </select>
 
+    <select id="selectProductInfoByKey" parameterType="java.lang.String" resultType="com.example.wwq.entity.WwqProduct">
+        select * from wwq_product where id = #{id} and deleteFlag = 0
+    </select>
+
 </mapper>

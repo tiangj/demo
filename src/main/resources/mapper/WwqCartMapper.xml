@@ -23,4 +23,151 @@
         id, product_id AS productId, user_id AS userId, buy_num AS buyNum, total_price AS totalPrice, product_type_id AS productTypeId, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, delete_flag AS deleteFlag
     </sql>
 
+    <select id="selectCartByproductIdAndTypeIdUserId" resultType="java.util.Map" parameterType="java.util.Map">
+         SELECT * FROM wwq_cart WHERE product_id = #{productId} and user_id = #{userId} and delete_flag=0
+    </select>
+
+    <insert id="insertShopCartRecord" parameterType="com.example.wwq.entity.WwqCart">
+        insert into wwq_cart
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+                id,
+            <if test="productId != null" >
+                product_id,
+            </if>
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="buyNum != null" >
+                buy_num,
+            </if>
+            <if test="totalPrice != null" >
+                total_price,
+            </if>
+            <if test="productTypeId != null" >
+                product_type_id,
+            </if>
+            <if test="remark != null" >
+                remark,
+            </if>
+            <if test="createDate != null" >
+                create_date,
+            </if>
+            <if test="createUser != null" >
+                create_user,
+            </if>
+            <if test="updateDate != null" >
+                update_date,
+            </if>
+            <if test="updateUser != null" >
+                update_user,
+            </if>
+            <if test="deleteFlag != null" >
+                delete_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+                #{id,jdbcType=VARCHAR},
+            <if test="productId != null" >
+                #{productId,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null" >
+                #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="buyNum != null" >
+                #{buyNum,jdbcType=INTEGER},
+            </if>
+            <if test="totalPrice != null" >
+                #{totalPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="productTypeId != null" >
+                #{productTypeId,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null" >
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null" >
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUser != null" >
+                #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDate != null" >
+                #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null" >
+                #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteFlag != null" >
+                #{deleteFlag,jdbcType=BIT},
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="updateShopCartRecordById" parameterType="com.example.wwq.entity.WwqCart" >
+        update wwq_cart
+        <set >
+            <if test="productId != null" >
+                product_id = #{productId,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="buyNum != null" >
+                buy_num = #{buyNum,jdbcType=INTEGER},
+            </if>
+            <if test="totalPrice != null" >
+                total_price = #{totalPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="productTypeId != null" >
+                product_type_id = #{productTypeId,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null" >
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null" >
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createUser != null" >
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDate != null" >
+                update_date = #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUser != null" >
+                update_user = #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteFlag != null" >
+                delete_flag = #{deleteFlag,jdbcType=BIT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <select id="shopProductCartList" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+			sc.id,
+			sc.buy_num,
+			sc.total_price,
+			sp.id as productId,
+			sp.product_name,
+			sp.product_now_price,
+			sp.product_type,
+			CONCAT(#{fileHead},spf.file_path) as file_path
+		FROM
+			wwq_cart AS sc
+		LEFT JOIN wwq_product as sp on sp.id = sc.product_id
+		LEFT JOIN wwq_product_file AS spf ON sp.id = spf.product_id and spf.file_type = 0
+		LEFT JOIN wwq_user as su on su.id = sc.user_id
+		WHERE
+			sc.delete_flag = 0 and su.deleteFlag = 0 and su.id = #{userId}
+    </select>
+
+    <select id="selectCartInfoByKey" resultType="com.example.wwq.entity.WwqCart" parameterType="java.lang.String">
+          select * from wwq_cart where id = #{id} and delete_flag = 0
+    </select>
+
+    <select id="shopCartProductNum" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select COUNT(id) as num from wwq_cart where user_id = #{userId} and delete_flag = 0
+    </select>
 </mapper>
