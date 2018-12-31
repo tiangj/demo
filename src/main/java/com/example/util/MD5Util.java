@@ -1,5 +1,6 @@
 package com.example.util;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.security.MessageDigest;
@@ -52,9 +53,39 @@ public class MD5Util {
         System.out.println("32result: " + md5Str);
     }
 
+    /***
+     * base 64 加密
+     * @param orgStr
+     * @return
+     */
+    public static String encodeBase64(String orgStr){
+        byte[] b = Base64.encodeBase64(orgStr.getBytes(), true);
+        String str = new String(b);
+        return  str.trim();
+    };
+
+    /***
+     * base 64 解密
+     * @param str
+     * @return
+     */
+    public  static String decodeBase64(String str){
+        byte[] b1 = Base64.decodeBase64(str);
+        return new String(b1).trim();
+    }
+
     public static void main(String[] args) {
-        encrypByMd5("888888");
-        encrypByMd5Jar("888888");
+       // encrypByMd5("888888");
+       // encrypByMd5Jar("888888");
+
+        String strInfo="888888";
+        byte[] b = Base64.encodeBase64(strInfo.getBytes(), true);
+        String str = new String(b);
+        System.out.println("BASE64:     "+str);
+
+        //解密
+        byte[] b1 = Base64.decodeBase64("ODg4ODg4");
+        System.out.println("解密之后内容为：  "+new String(b1));
     }
 
 }

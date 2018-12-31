@@ -3,11 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
     <script th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
     <script  th:src="@{/sys/userList.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/js/xadmin.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/font.css}">
+    <link rel="stylesheet" th:href="@{/css/xadmin.css}">
+    <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}">
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        ctxPath = /*[[@{/}]]*/ '';
+        /*]]>*/
+        console.info(ctxPath);
+    </script>
 </head>
-<body>
-用户列表
+<body class="layui-anim layui-anim-up">
+    <div class="x-nav">
+
+    </div>
+
+
+    <div class="demoTable">
+
+        <div class="layui-row">
+            <div class="layui-col-md12 x-so">
+                    <!--<label class="layui-col-md4 layui-col-lg-offset1">-->
+                        <!--<span>日期:</span>-->
+                        <!--<input class="layui-input" placeholder="开始日" name="start" id="start">&#45;&#45;-->
+                        <!--<input class="layui-input" placeholder="截止日" name="end" id="end">-->
+                    <!--</label>-->
+
+                    <label class="layui-col-md3 layui-col-lg-offset1">
+                        <span>账号:</span>
+                        <input type="text" id="username" name="username"  placeholder="请输入账号" autocomplete="off" class="layui-input">
+                    </label>
+                    <label class="layui-col-md3">
+                        <span>用户名:</span>
+                        <input type="text" id="name" name="name"  placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                    </label>
+                    <button style="margin-right: 10px;" class="layui-btn" data-type="reload"><i class="layui-icon">&#xe615;</i></button>
+            </div>
+        </div>
+
+        <!--<button class="layui-btn" data-type="reload">搜索</button>-->
+    </div>
+
+    <xblock>
+        <button class="layui-btn"  onclick="x_admin_show('添加用户','sysUser/userAdd',600,400)">新增</button>
+    </xblock>
+    <table class="layui-hide" id="LAY_table_user" lay-filter="user" ></table>
 </body>
 </html>

@@ -36,7 +36,7 @@ public class LoginController {
     public Map<String,Object> signIn(String name,String password,HttpServletRequest request){
         EntityWrapper<SysUser> sysUserEntityWrapper=new EntityWrapper<>();
         sysUserEntityWrapper.eq("login_name",name);
-        password=MD5Util.encrypByMd5(password);
+        password=MD5Util.encodeBase64(password)+"";
         sysUserEntityWrapper.eq("password",password);
         sysUserEntityWrapper.eq("del_flag",0);
         SysUser sysUser=sysUserService.selectOne(sysUserEntityWrapper);
