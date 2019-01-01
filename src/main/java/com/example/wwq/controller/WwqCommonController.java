@@ -33,6 +33,9 @@ public class WwqCommonController {
     @Value("${upload.file.type}")
     private String fileType;
 
+    @Value("${base.uploadFile.server}")
+    private String baseFileServer;
+
     @Autowired
     private IWwqBannerService bannerService;
 
@@ -58,7 +61,7 @@ public class WwqCommonController {
             result.put("code",0);
             result.put("msg","图片为空！");
         }else{
-            List<String> lists = FileUpload.fileMany(files,filePath);
+            List<String> lists = FileUpload.fileMany(files,filePath,baseFileServer);
             result.put("code",1);
             result.put("msg","成功");
             result.put("picUrl",lists);

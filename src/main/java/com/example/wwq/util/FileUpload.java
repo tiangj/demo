@@ -1,9 +1,5 @@
 package com.example.wwq.util;
 
-import com.example.wwq.entity.WwqProductFile;
-import com.example.wwq.service.IWwqBannerService;
-import com.example.wwq.service.IWwqProductFileService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -16,21 +12,16 @@ import java.util.UUID;
 
 public class FileUpload {
 
-    @Autowired
-    private IWwqProductFileService productFileService;
-
-    @Autowired
-    private IWwqBannerService bannerService;
 
     /**
      * @function 多文件上传
      * @return
      */
-    public static List<String> fileMany(MultipartFile[] files , String saveUrl){
-
+    public static List<String> fileMany(MultipartFile[] files , String saveUrl,String baseFileServer){
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyyMMdd");
+        String dateStr=simpleDateFormat.format(new Date());
         List<String> picUrl = new ArrayList<>();
-        String newUrl = saveUrl + "\\" + simpleDateFormat.format(new Date()) + "\\pic\\";
+        String newUrl = saveUrl + "\\" + dateStr+"\\";
         File saveDir = new File(newUrl);
         if(!saveDir.exists()){
             saveDir.mkdirs();
@@ -43,6 +34,7 @@ public class FileUpload {
                 File saveFile = new File(newFileUrl);
                 try {
                     file.transferTo(saveFile);
+                    newFileUrl=baseFileServer+dateStr+"/"+fileName;
                     picUrl.add(newFileUrl);
 
                 } catch (IOException e) {
