@@ -18,7 +18,7 @@ layui.use('upload', function() {
         ,done: function(res){
             //上传完毕
             if(res.code==1){
-                layui.msg(res.msg,{icon:5});
+                layer.msg(res.msg,{icon:5});
             //     var picUrlList=res.picUrl;
             //     var html="";
             //     for(var i=0;i<picUrlList.length;i++){
@@ -45,7 +45,7 @@ layui.use('upload', function() {
         ,done: function(res){
             //上传完毕
             if(res.code==1){
-                layui.msg(res.msg,{icon:5});
+                layer.msg(res.msg,{icon:5});
             //     var picUrlList=res.picUrl;
             //     var html="";
             //     for(var i=0;i<picUrlList.length;i++){
@@ -72,7 +72,7 @@ layui.use('upload', function() {
         ,done: function(res){
             //上传完毕
             if(res.code==1){
-                layui.msg(res.msg,{icon:5});
+                layer.msg(res.msg,{icon:5});
             //     var picUrlList=res.picUrl;
             //     var html="";
             //     for(var i=0;i<picUrlList.length;i++){
