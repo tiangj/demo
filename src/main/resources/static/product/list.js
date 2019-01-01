@@ -9,7 +9,7 @@ $(function () {
             elem: '#LAY_table_product'
             , url: ctxPath + 'wwqProduct/listData'
             , cols: [[
-                {field: 'productId', title: 'ID', width: '5%', sort: true, fixed: 'left'}
+                {field: 'productId', hide:true}
                 , {field: 'productName', title: '商品名称', width: '10%', sort: true}
                 , {field: 'productOrginPrice', title: '商品原价', width: '8%', sort: true}
                 , {field: 'productNowPrice', title: '商品折扣价', width: '8%', sort: true}
@@ -47,7 +47,42 @@ $(function () {
             , id: 'productReload'
             , page: true
             , height: height
+            ,done: function(res, curr, count){
+                $("[data-field='productId']").css('display','none');
+            }
         });
+
+        //监听工具条
+        table.on('tool(product)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'detail') {
+                layer.msg('ID：' + data.productId + ' 的查看操作');
+            } else if (obj.event === 'del') {
+                layer.confirm('真的删除行么', function (index) {
+
+                    $.ajax({
+                        url: ctxPath + 'wwqProduct/delProduct',
+                        method: 'post',
+                        data: {id: data.productId},
+                        dataType: 'JSON',
+                        async: true,
+                        success: function (res) {
+                            if (res.code == 1) {
+                                layer.msg(res.msg, {icon: 6});
+                                obj.del();
+                                layer.close(index);
+                            } else {
+                                layer.msg(res.msg, {icon: 2});
+                            }
+                        }
+                    })
+
+                });
+            } else if (obj.event === 'edit') {
+                x_admin_show('修改商品信息', 'wwqProduct/addProduct?id=' + data.productId, 1000, 800);
+            }
+        });
+
         var $ = layui.$, active = {
             reload: function () {
                 var productName = $('#productName').val();

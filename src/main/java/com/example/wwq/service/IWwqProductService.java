@@ -1,6 +1,7 @@
 package com.example.wwq.service;
 
 import com.baomidou.mybatisplus.plugins.Page;
+import com.example.wwq.DO.ProductAddDO;
 import com.example.wwq.DO.ProductDO;
 import com.example.wwq.entity.WwqProduct;
 import com.baomidou.mybatisplus.service.IService;
@@ -28,4 +29,8 @@ public interface IWwqProductService extends IService<WwqProduct> {
     Map<String, Object> shopProductListInfo(String id);
 
     Page<ProductDO> getAllProduct(Page<ProductDO> page, ProductDO productDO);
+
+    ProductAddDO getProductById(String id);
+
+    Map<String,Object> saveProduct(ProductAddDO productAddDO,String userId,String userName) throws Exception;
 }

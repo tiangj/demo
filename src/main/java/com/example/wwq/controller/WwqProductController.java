@@ -3,8 +3,9 @@ package com.example.wwq.controller;
 
 import com.baomidou.mybatisplus.plugins.Page;
 
+import com.example.config.ConstantUtil;
+import com.example.wwq.DO.ProductAddDO;
 import com.example.wwq.DO.ProductDO;
-import com.example.wwq.entity.WwqProduct;
 import com.example.wwq.kit.JSONResult;
 import com.example.wwq.service.IWwqProductService;
 import com.github.pagehelper.PageInfo;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -127,10 +129,43 @@ public class WwqProductController {
     }
 
     @RequestMapping("addProduct")
-    public String productAdd(Model model){
-        WwqProduct wwqProduct=new WwqProduct();
-        model.addAttribute("wwqProduct",wwqProduct);
+    public String productAdd(Model model,String id){
+        ProductAddDO productAddDO=null;
+        if(id==null || "".equals(id)){
+            productAddDO=new ProductAddDO();
+        }else {
+            productAddDO = wwqProductService.getProductById(id);
+        }
+        model.addAttribute("productAddDO",productAddDO);
         return "product/add";
+    }
+
+    /********
+     * 删除商品
+     * @param id
+     * @return
+     */
+    @RequestMapping("delProduct")
+    @ResponseBody
+    public Map<String,Object> delProduct(String id){
+
+        return null;
+    }
+
+    @ResponseBody
+    @RequestMapping("saveProduct")
+    public Map<String,Object> saveProduct(ProductAddDO productAddDO, HttpServletRequest request){
+        String userId=request.getSession().getAttribute(ConstantUtil.SEESION_USER_ID).toString();
+        String userName=request.getSession().getAttribute(ConstantUtil.SESSION_USER_NAME).toString();
+        Map<String,Object> result=new HashMap<>();
+        try {
+            result=wwqProductService.saveProduct(productAddDO,userId,userName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("code",0);
+            result.put("msg","操作失败");
+        }
+        return result;
     }
 }
 

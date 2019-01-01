@@ -5,7 +5,7 @@ package com.example.wwq.DO;
  */
 public class ProductDO {
 
-    private Integer productId;
+    private String productId;
 
     private String productName;
 
@@ -27,11 +27,13 @@ public class ProductDO {
 
     private Integer sortId;
 
-    public Integer getProductId() {
+    private String detailId;
+
+    public String getProductId() {
         return productId;
     }
 
-    public void setProductId(Integer productId) {
+    public void setProductId(String productId) {
         this.productId = productId;
     }
 
@@ -113,5 +115,13 @@ public class ProductDO {
 
     public void setProductType(String productType) {
         this.productType = productType;
+    }
+
+    public String getDetailId() {
+        return detailId;
+    }
+
+    public void setDetailId(String detailId) {
+        this.detailId = detailId;
     }
 }

@@ -113,6 +113,9 @@ public class WwqProduct extends Model<WwqProduct> {
     @TableField("recommend_boutique")
     private Integer recommendBoutique;
 
+    @TableField("product_type")
+    private Integer productType;
+
 
     public String getId() {
         return id;
@@ -272,6 +275,14 @@ public class WwqProduct extends Model<WwqProduct> {
 
     public void setRecommendBoutique(Integer recommendBoutique) {
         this.recommendBoutique = recommendBoutique;
+    }
+
+    public Integer getProductType() {
+        return productType;
+    }
+
+    public void setProductType(Integer productType) {
+        this.productType = productType;
     }
 
     public static final String ID = "id";

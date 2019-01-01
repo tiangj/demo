@@ -1,6 +1,7 @@
 package com.example.contorller;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.example.config.ConstantUtil;
 import com.example.sys.entity.SysUser;
 import com.example.sys.service.ISysUserService;
 import com.example.util.MD5Util;
@@ -44,7 +45,8 @@ public class LoginController {
         Map<String,Object> result=new HashMap<>();
         if(sysUser!=null){
             HttpSession session = request.getSession();
-            session.setAttribute("userId",sysUser.getId());
+            session.setAttribute(ConstantUtil.SEESION_USER_ID,sysUser.getId());
+            session.setAttribute(ConstantUtil.SESSION_USER_NAME,sysUser.getName());
             //session.setMaxInactiveInterval(3000);
             result.put("code",1);
             result.put("msg","登录成功...");
