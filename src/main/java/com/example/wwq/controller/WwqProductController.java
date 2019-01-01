@@ -1,12 +1,15 @@
 package com.example.wwq.controller;
 
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 
 import com.example.config.ConstantUtil;
 import com.example.wwq.DO.ProductAddDO;
 import com.example.wwq.DO.ProductDO;
+import com.example.wwq.entity.WwqProductFile;
 import com.example.wwq.kit.JSONResult;
+import com.example.wwq.service.IWwqProductFileService;
 import com.example.wwq.service.IWwqProductService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,6 +39,9 @@ public class WwqProductController {
 
     @Autowired
     private IWwqProductService wwqProductService;
+
+    @Autowired
+    private IWwqProductFileService wwqProductFileService;
 
 
     /**
@@ -165,6 +172,38 @@ public class WwqProductController {
             result.put("code",0);
             result.put("msg","操作失败");
         }
+        return result;
+    }
+
+    /**********
+     * 跳转至保持图片页面
+     * @param id
+     * @return
+     */
+    @RequestMapping("addProductPic")
+    public String addProductPic(Model model,String id){
+        model.addAttribute("id",id);
+        return "product/addPic";
+    }
+
+    /****
+     * 加载商品图片
+     * @param id
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("loadProducFiles")
+    public Map<String,Object> loadProducFiles(String id){
+        //根据图片id获取图片信息
+        EntityWrapper<WwqProductFile> entityWrapper=new EntityWrapper<>();
+        entityWrapper.eq("product_id",id);
+        entityWrapper.eq("deleteFlag",0);
+        List<WwqProductFile> productFiles=wwqProductFileService.selectList(entityWrapper);
+        Map<String,Object> result=new HashMap<>();
+        result.put("code",0);
+        result.put("msg","");
+        result.put("count",productFiles.size());
+        result.put("data",productFiles);
         return result;
     }
 }

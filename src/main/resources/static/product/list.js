@@ -36,10 +36,12 @@ $(function () {
                     }
                 }
                 , {
-                    filed: 'cz', title: '操作', width: '10%', templet: function (d) {
+                    filed: 'cz', title: '操作', width: '15%', templet: function (d) {
                         var html = "";
+                        var productId="'"+d.productId+"'";
                         html += '<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>';
                         html += '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+                        html+='<a class="layui-btn layui-btn-danger layui-btn-xs" onclick="addProductPic('+productId+')">图片管理</a>'
                         return html;
                     }
                 }
@@ -80,6 +82,7 @@ $(function () {
                 });
             } else if (obj.event === 'edit') {
                 x_admin_show('修改商品信息', 'wwqProduct/addProduct?id=' + data.productId, 1000, 800);
+                //图片上传页面
             }
         });
 
@@ -104,3 +107,7 @@ $(function () {
         });
     });
 });
+
+function addProductPic(id) {
+    x_admin_show('图片管理', 'wwqProduct/addProductPic?id=' + id, 800, 600);
+}
