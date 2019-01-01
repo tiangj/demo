@@ -1,16 +1,22 @@
 package com.example.wwq.controller;
 
 
+import com.baomidou.mybatisplus.plugins.Page;
+
+import com.example.wwq.DO.ProductDO;
+import com.example.wwq.entity.WwqProduct;
 import com.example.wwq.kit.JSONResult;
 import com.example.wwq.service.IWwqProductService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -91,6 +97,40 @@ public class WwqProductController {
     public String shopProductListInfo(@RequestParam(value="productId",required=true) String id){
        Map<String, Object> shopProductDetail = wwqProductService.shopProductListInfo(id);
         return JSONResult.init(200, "success", shopProductDetail);
+    }
+
+
+    @RequestMapping("list")
+    public String list(){
+        return "product/list";
+    }
+
+    /*****
+     * 加载商品列表
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("listData")
+    public Map<String,Object> listData(Integer page, Integer limit,String productName){
+        Page<ProductDO> productDOPage=new Page<>();
+        productDOPage.setLimit(limit);
+        productDOPage.setCurrent(page);
+        ProductDO productDO=new ProductDO();
+        productDO.setProductName(productName);
+        Page<ProductDO> pageList=wwqProductService.getAllProduct(productDOPage,productDO);
+        Map<String,Object> result=new HashMap<>();
+        result.put("code",0);
+        result.put("msg","");
+        result.put("count",pageList.getTotal());
+        result.put("data",pageList.getRecords());
+        return result;
+    }
+
+    @RequestMapping("addProduct")
+    public String productAdd(Model model){
+        WwqProduct wwqProduct=new WwqProduct();
+        model.addAttribute("wwqProduct",wwqProduct);
+        return "product/add";
     }
 }
 

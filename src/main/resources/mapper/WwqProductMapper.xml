@@ -104,4 +104,20 @@
         select * from wwq_product where id = #{id} and deleteFlag = 0
     </select>
 
+    <select id="getAllProduct" resultType="com.example.wwq.DO.ProductDO" parameterType="com.example.wwq.DO.ProductDO">
+        SELECT
+        p.id as productId,p.product_name as productName,p.product_orgin_price as productOrginPrice,
+        p.product_now_price as productNowPrice,p.sell_num as sellNum,
+        p.remain_num as remainNum,p.product_num as productNum,p.product_dec as productDec,p.product_type as productType,
+        s.name as sortName
+        FROM
+        wwq_product p
+        left join wwq_sort s on s.id=p.sort_id
+        where 1=1
+        <if test="productName!=null and productName!=''">
+            and p.product_name like '%${productName}%'
+        </if>
+        order by p.create_date desc
+    </select>
+
 </mapper>

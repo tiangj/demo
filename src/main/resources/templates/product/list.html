@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/js/xadmin.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/font.css}">
+    <link rel="stylesheet" th:href="@{/css/xadmin.css}">
+    <link rel="stylesheet" th:href="@{/lib/layui/css/layui.css}">
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        ctxPath = /*[[@{/}]]*/ '';
+        /*]]>*/
+        console.info(ctxPath);
+    </script>
+    <script type="text/javascript" th:src="@{/product/list.js}" charset="utf-8"></script>
+</head>
+<body class="layui-anim layui-anim-up">
+    <div class="x-nav"></div>
+    <div class="productTable">
+        <div class="layui-row">
+            <div class="layui-col-md12 x-so">
+                <label class="layui-col-md3 layui-col-lg-offset1">
+                    <span>商品名称:</span>
+                    <input type="text" id="productName" name="productName"  placeholder="请输入商品名称" autocomplete="off" class="layui-input">
+                </label>
+                <button style="margin-right: 10px;" class="layui-btn" data-type="reload"><i class="layui-icon">&#xe615;</i></button>
+            </div>
+        </div>
+    </div>
+
+    <xblock>
+        <button class="layui-btn"  onclick="x_admin_show('新增商品','wwqProduct/addProduct',1000,800)">新增</button>
+    </xblock>
+    <table class="layui-hide" id="LAY_table_product" lay-filter="product" ></table>
+</body>
+</html>

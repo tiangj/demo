@@ -1,6 +1,8 @@
 package com.example.wwq.service.impl;
 
+import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
+import com.example.wwq.DO.ProductDO;
 import com.example.wwq.entity.WwqProduct;
 import com.example.wwq.kit.FileHeadHelper;
 import com.example.wwq.mapper.WwqProductFileMapper;
@@ -84,5 +86,11 @@ public class WwqProductServiceImpl extends ServiceImpl<WwqProductMapper, WwqProd
             }
         }
         return shopProductInfo;
+    }
+
+    @Override
+    public Page<ProductDO> getAllProduct(Page<ProductDO> page, ProductDO productDO) {
+        page.setRecords(wwqProductMapper.getAllProduct(page,productDO));
+        return page;
     }
 }

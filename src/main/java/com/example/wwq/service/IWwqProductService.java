@@ -1,5 +1,7 @@
 package com.example.wwq.service;
 
+import com.baomidou.mybatisplus.plugins.Page;
+import com.example.wwq.DO.ProductDO;
 import com.example.wwq.entity.WwqProduct;
 import com.baomidou.mybatisplus.service.IService;
 import com.github.pagehelper.PageInfo;
@@ -24,4 +26,6 @@ public interface IWwqProductService extends IService<WwqProduct> {
     PageInfo<Map<String,Object>> searchShopProductList(String productName,Integer pageNum, Integer pageSize);
 
     Map<String, Object> shopProductListInfo(String id);
+
+    Page<ProductDO> getAllProduct(Page<ProductDO> page, ProductDO productDO);
 }
