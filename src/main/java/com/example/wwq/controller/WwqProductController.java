@@ -1,16 +1,28 @@
 package com.example.wwq.controller;
 
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+
+import com.example.config.ConstantUtil;
+import com.example.wwq.DO.ProductAddDO;
+import com.example.wwq.DO.ProductDO;
+import com.example.wwq.entity.WwqProductFile;
 import com.example.wwq.kit.JSONResult;
+import com.example.wwq.service.IWwqProductFileService;
 import com.example.wwq.service.IWwqProductService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,6 +39,9 @@ public class WwqProductController {
 
     @Autowired
     private IWwqProductService wwqProductService;
+
+    @Autowired
+    private IWwqProductFileService wwqProductFileService;
 
 
     /**
@@ -91,6 +106,105 @@ public class WwqProductController {
     public String shopProductListInfo(@RequestParam(value="productId",required=true) String id){
        Map<String, Object> shopProductDetail = wwqProductService.shopProductListInfo(id);
         return JSONResult.init(200, "success", shopProductDetail);
+    }
+
+
+    @RequestMapping("list")
+    public String list(){
+        return "product/list";
+    }
+
+    /*****
+     * 加载商品列表
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("listData")
+    public Map<String,Object> listData(Integer page, Integer limit,String productName){
+        Page<ProductDO> productDOPage=new Page<>();
+        productDOPage.setLimit(limit);
+        productDOPage.setCurrent(page);
+        ProductDO productDO=new ProductDO();
+        productDO.setProductName(productName);
+        Page<ProductDO> pageList=wwqProductService.getAllProduct(productDOPage,productDO);
+        Map<String,Object> result=new HashMap<>();
+        result.put("code",0);
+        result.put("msg","");
+        result.put("count",pageList.getTotal());
+        result.put("data",pageList.getRecords());
+        return result;
+    }
+
+    @RequestMapping("addProduct")
+    public String productAdd(Model model,String id){
+        ProductAddDO productAddDO=null;
+        if(id==null || "".equals(id)){
+            productAddDO=new ProductAddDO();
+        }else {
+            productAddDO = wwqProductService.getProductById(id);
+        }
+        model.addAttribute("productAddDO",productAddDO);
+        return "product/add";
+    }
+
+    /********
+     * 删除商品
+     * @param id
+     * @return
+     */
+    @RequestMapping("delProduct")
+    @ResponseBody
+    public Map<String,Object> delProduct(String id){
+
+        return null;
+    }
+
+    @ResponseBody
+    @RequestMapping("saveProduct")
+    public Map<String,Object> saveProduct(ProductAddDO productAddDO, HttpServletRequest request){
+        String userId=request.getSession().getAttribute(ConstantUtil.SEESION_USER_ID).toString();
+        String userName=request.getSession().getAttribute(ConstantUtil.SESSION_USER_NAME).toString();
+        Map<String,Object> result=new HashMap<>();
+        try {
+            result=wwqProductService.saveProduct(productAddDO,userId,userName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("code",0);
+            result.put("msg","操作失败");
+        }
+        return result;
+    }
+
+    /**********
+     * 跳转至保持图片页面
+     * @param id
+     * @return
+     */
+    @RequestMapping("addProductPic")
+    public String addProductPic(Model model,String id){
+        model.addAttribute("id",id);
+        return "product/addPic";
+    }
+
+    /****
+     * 加载商品图片
+     * @param id
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("loadProducFiles")
+    public Map<String,Object> loadProducFiles(String id){
+        //根据图片id获取图片信息
+        EntityWrapper<WwqProductFile> entityWrapper=new EntityWrapper<>();
+        entityWrapper.eq("product_id",id);
+        entityWrapper.eq("deleteFlag",0);
+        List<WwqProductFile> productFiles=wwqProductFileService.selectList(entityWrapper);
+        Map<String,Object> result=new HashMap<>();
+        result.put("code",0);
+        result.put("msg","");
+        result.put("count",productFiles.size());
+        result.put("data",productFiles);
+        return result;
     }
 }
 

@@ -24,6 +24,7 @@
         <result column="update_user" property="updateUser" />
         <result column="deleteFlag" property="deleteFlag" />
         <result column="recommend_boutique" property="recommendBoutique" />
+        <result column="product_type" property="productType"></result>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -102,6 +103,41 @@
 
     <select id="selectProductInfoByKey" parameterType="java.lang.String" resultType="com.example.wwq.entity.WwqProduct">
         select * from wwq_product where id = #{id} and deleteFlag = 0
+    </select>
+
+
+    <select id="getProductById" parameterType="java.lang.String" resultType="com.example.wwq.DO.ProductAddDO">
+         SELECT
+            p.id, p.product_name AS productName, p.product_orgin_price AS productOrginPrice, p.product_now_price AS productNowPrice, p.product_num AS productNum,
+            p.post_price AS postPrice, p.recommend_brand AS recommendBrand, p.sell_num AS sellNum, p.remain_num AS remainNum,
+            p.product_dec AS productDec, p.sort_id AS sortId, p.scope_id AS scopeId, p.sort, p.remark, p.create_date AS createDate,
+            p.create_user AS createUser, p.update_date AS updateDate, p.update_user AS updateUser, p.deleteFlag, p.recommend_boutique AS recommendBoutique,
+            p.product_type as productType,
+            pd.id as detailId,pd.post_way_id as postWayId,pd.delivery_area_id as deliveryAreaId,pd.remark as detailRemark
+        FROM
+        wwq_product p
+        left join wwq_product_detail pd on p.id=pd.shop_product_id
+        left join wwq_sort s on s.id=p.sort_id
+        where 1=1 and p.id = #{id}
+        and p.deleteFlag = 0
+    </select>
+
+    <select id="getAllProduct" resultType="com.example.wwq.DO.ProductDO" parameterType="com.example.wwq.DO.ProductDO">
+        SELECT
+        p.id as productId,p.product_name as productName,p.product_orgin_price as productOrginPrice,
+        p.product_now_price as productNowPrice,p.sell_num as sellNum,
+        p.remain_num as remainNum,p.product_num as productNum,p.product_dec as productDec,p.product_type as productType,
+        s.name as sortName,pd.id as detailId
+        FROM
+        wwq_product p
+        left join wwq_product_detail pd on p.id=pd.shop_product_id
+        left join wwq_sort s on s.id=p.sort_id
+        where 1=1
+        <if test="productName!=null and productName!=''">
+            and p.product_name like '%${productName}%'
+        </if>
+         and p.deleteFlag = 0
+        order by p.create_date desc
     </select>
 
 </mapper>

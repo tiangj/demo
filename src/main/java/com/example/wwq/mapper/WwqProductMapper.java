@@ -1,5 +1,9 @@
 package com.example.wwq.mapper;
 
+
+import com.baomidou.mybatisplus.plugins.Page;
+import com.example.wwq.DO.ProductAddDO;
+import com.example.wwq.DO.ProductDO;
 import com.example.wwq.entity.WwqProduct;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 
@@ -26,4 +30,8 @@ public interface WwqProductMapper extends BaseMapper<WwqProduct> {
     Map<String,Object> shopProductListInfo(Map<String,Object> map);
 
     WwqProduct selectProductInfoByKey(String id);
+
+    ProductAddDO getProductById(String id);
+
+    List<ProductDO> getAllProduct(Page<ProductDO> page, ProductDO productDO);
 }
