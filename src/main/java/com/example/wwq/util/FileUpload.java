@@ -21,7 +21,7 @@ public class FileUpload {
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyyMMdd");
         String dateStr=simpleDateFormat.format(new Date());
         List<String> picUrl = new ArrayList<>();
-        String newUrl = saveUrl + "\\" + dateStr+"\\";
+        String newUrl = saveUrl + "/" + dateStr+"/";
         File saveDir = new File(newUrl);
         if(!saveDir.exists()){
             saveDir.mkdirs();
