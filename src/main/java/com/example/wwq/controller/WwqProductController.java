@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.example.config.ConstantUtil;
 import com.example.wwq.DO.ProductAddDO;
 import com.example.wwq.DO.ProductDO;
+import com.example.wwq.entity.WwqProduct;
 import com.example.wwq.entity.WwqProductFile;
 import com.example.wwq.kit.JSONResult;
 import com.example.wwq.service.IWwqProductFileService;
@@ -155,8 +156,19 @@ public class WwqProductController {
     @RequestMapping("delProduct")
     @ResponseBody
     public Map<String,Object> delProduct(String id){
-
-        return null;
+        Map<String,Object> result=new HashMap<>();
+        WwqProduct wwqProduct=new WwqProduct();
+        wwqProduct.setId(id);
+        wwqProduct.setDeleteFlag(1);
+        Boolean flag=wwqProductService.updateById(wwqProduct);
+        if(flag){
+            result.put("code",1);
+            result.put("msg","删除成功");
+        }else{
+            result.put("code",0);
+            result.put("msg","删除失败");
+        }
+        return result;
     }
 
     @ResponseBody
