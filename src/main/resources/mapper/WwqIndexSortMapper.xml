@@ -22,7 +22,7 @@
     </sql>
 
     <select id="shopIndexSortList" resultType="java.util.Map" parameterType="java.lang.String">
-        SELECT id,name,CONCAT(#{fileHead},file_path) as file_path FROM wwq_index_sort WHERE delete_flag=0
+        SELECT id,name,file_path as file_path FROM wwq_index_sort WHERE delete_flag=0
     </select>
 
 </mapper>

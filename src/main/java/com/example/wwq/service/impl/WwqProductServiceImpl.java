@@ -44,7 +44,6 @@ public class WwqProductServiceImpl extends ServiceImpl<WwqProductMapper, WwqProd
         PageHelper.startPage(pageNum, pageSize);
         Map<String, Object> example = new HashMap<>();
         example.put("sortId", sortId);
-        example.put("fileHead", FileHeadHelper.FILE_HEAD);
         List<Map<String,Object>> list = wwqProductMapper.shopProductList(example);
         PageInfo<Map<String,Object>> pageShopProduct = new PageInfo<Map<String,Object>>(list);
         return pageShopProduct;
@@ -55,7 +54,6 @@ public class WwqProductServiceImpl extends ServiceImpl<WwqProductMapper, WwqProd
         PageHelper.startPage(pageNum, pageSize);
         Map<String, Object> example = new HashMap<String, Object>();
         example.put("type", type);
-        example.put("fileHead", FileHeadHelper.FILE_HEAD);
         List<Map<String, Object>>  listing = wwqProductMapper.shopRecommended(example);
         PageInfo<Map<String,Object>> pageShopProduct = new PageInfo<Map<String,Object>>(listing);
         return pageShopProduct;
@@ -65,7 +63,6 @@ public class WwqProductServiceImpl extends ServiceImpl<WwqProductMapper, WwqProd
     public PageInfo<Map<String,Object>> searchShopProductList(String productName,Integer pageNum, Integer pageSize){PageHelper.startPage(pageNum, pageSize);
         Map<String, Object> example = new HashMap<String, Object>();
         example.put("productName", productName);
-        example.put("fileHead", FileHeadHelper.FILE_HEAD);
         List<Map<String,Object>> list = wwqProductMapper.searchShopProductList(example);
         PageInfo<Map<String,Object>> pageShopProduct = new PageInfo<Map<String,Object>>(list);
         return pageShopProduct;
@@ -75,13 +72,11 @@ public class WwqProductServiceImpl extends ServiceImpl<WwqProductMapper, WwqProd
     @Override
     public Map<String, Object> shopProductListInfo(String id) {
         Map<String, Object> example = new HashMap<String, Object>();
-        example.put("fileHead", FileHeadHelper.FILE_HEAD);
         example.put("id", id);
         Map<String, Object> shopProductInfo = wwqProductMapper.shopProductListInfo(example);
         if(shopProductInfo != null && shopProductInfo.size() > 0){
             Map<String, Object> example1 = new HashMap<String, Object>();
             example1.put("id", shopProductInfo.get("id"));
-            example1.put("fileHead", FileHeadHelper.FILE_HEAD);
             List<Map<String,Object>> productFileList = wwqProductFileMapper.selectProductFileListByProductId(example1);
             if(productFileList == null || productFileList.size() < 1){
                 shopProductInfo.put("productFileList", new ArrayList<Map<String, Object>>());

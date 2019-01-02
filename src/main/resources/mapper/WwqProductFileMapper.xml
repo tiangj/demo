@@ -23,6 +23,6 @@
 
 
     <select id="selectProductFileListByProductId" resultType="java.util.Map" parameterType="java.util.Map">
-          SELECT id,CONCAT(#{fileHead},file_path) as file_path FROM wwq_product_file WHERE file_type = 2 and product_id = #{id} and deleteFlag =0
+          SELECT id,file_path as file_path FROM wwq_product_file WHERE file_type = 2 and product_id = #{id} and deleteFlag =0
     </select>
 </mapper>

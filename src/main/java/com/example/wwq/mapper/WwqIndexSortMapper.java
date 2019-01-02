@@ -17,5 +17,5 @@ import java.util.Map;
 public interface WwqIndexSortMapper extends BaseMapper<WwqIndexSort> {
 
 
-    List<Map<String,Object>> shopIndexSortList(String fileHead);
+    List<Map<String,Object>> shopIndexSortList();
 }

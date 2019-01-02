@@ -8,24 +8,56 @@
         <result column="user_id" property="userId" />
         <result column="address" property="address" />
         <result column="default_address" property="defaultAddress" />
-        <result column="concatName" property="concatName" />
+        <result column="concat_name" property="concatName" />
         <result column="phone" property="phone" />
         <result column="code" property="code" />
         <result column="province" property="province" />
         <result column="city" property="city" />
         <result column="county" property="county" />
-        <result column="detailAddress" property="detailAddress" />
+        <result column="detail_address" property="detailAddress" />
         <result column="remark" property="remark" />
         <result column="create_date" property="createDate" />
         <result column="create_user" property="createUser" />
         <result column="update_date" property="updateDate" />
         <result column="update_user" property="updateUser" />
-        <result column="deleteFlag" property="deleteFlag" />
+        <result column="delete_flag" property="deleteFlag" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id AS userId, address, default_address AS defaultAddress, concatName, phone, code, province, city, county, detailAddress, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, deleteFlag
+        id, user_id AS userId, address, default_address AS defaultAddress, concat_name, phone, code, province, city, county, detail_address, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, deleteFlag
     </sql>
+
+
+    <select id="getUserAddressList1" resultType="java.util.Map" parameterType="java.util.Map">
+           SELECT
+					sa.id,
+					sa.address,
+					sa.concat_name,
+					sa.default_address,
+					sa.phone
+				FROM
+					wwq_address AS sa
+				LEFT JOIN wwq_user AS su ON su.id = sa.user_id
+				WHERE sa.user_id = #{userId}
+				AND sa.delete_flag = 0
+				AND su.deleteFlag = 0
+    </select>
+
+
+    <select id="getCityCodeList" resultType="java.util.Map" parameterType="java.util.Map">
+        select id,name,level from shop_area
+        where
+        <if test="id == 0">
+            parent_id = 0
+        </if>
+        <if test="id != 0">
+            parent_id = #{id}
+        </if>
+    </select>
+
+    <select id="getDefaultAddress" resultType="com.example.wwq.entity.WwqAddress">
+        select * from shop_address as sa WHERE sa.default_address = 1 and sa.delete_flag = 0
+    </select>
 
 </mapper>

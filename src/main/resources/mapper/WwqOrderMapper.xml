@@ -33,4 +33,59 @@
         id, user_id AS userId, product_id AS productId, product_type_id AS productTypeId, product_cupon_id AS productCuponId, order_num AS orderNum, order_total_price AS orderTotalPrice, order_real_price AS orderRealPrice, post_way_type AS postWayType, post_date_id AS postDateId, consume_point AS consumePoint, message, order_status AS orderStatus, pay_status AS payStatus, pay_way AS payWay, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, delete_flag AS deleteFlag, address_id AS addressId
     </sql>
 
+
+    <select id="shopPayList" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        pay.id,
+        pay.pay_status
+        FROM
+        wwq_pay AS pay
+        where pay.user_id = #{userId}
+        and pay.deleteFlag = 0
+        <if test="payStatus ==0">
+            and 1=1
+        </if>
+        <if test="payStatus !=0">
+            and pay.pay_status = #{payStatus}
+        </if>
+    </select>
+
+    <select id="shopProductOrderList"  parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        so.id as id,
+        so.product_id,
+        sp.product_name as productName,
+        CONCAT(#{fileHead},spf.file_path) as filePath,
+        spt.product_now_price AS productNowPrice,
+        spt.product_orgin_price AS productOrginPrice,
+        spt.product_type as productType,
+        sp.post_price AS postPrice,
+        so.order_num AS orderNum,
+        so.post_way_type,
+        so.order_total_price,
+        sp.post_price
+        FROM
+        wwq_pay_detail AS spd
+        LEFT JOIN wwq_order AS so ON so.id = spd.order_id
+        LEFT JOIN wwq_product AS sp ON so.product_id = sp.id
+        LEFT JOIN wwq_product_file AS spf ON spf.product_id = sp.id and spf.file_type = 0
+        WHERE spd.pay_id = #{payId}
+        <if test="orderStatus != null">
+            AND so.order_status = #{orderStatus}
+        </if>
+        order by so.create_date desc
+    </select>
+
+    <select id="getStatusNumBystatus" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+      		COUNT(*) as num
+		FROM
+			wwq_pay as sp
+		WHERE
+			sp.user_id = #{userId}
+		AND
+			sp.pay_status = #{orderStatus}
+		AND
+			sp.deleteFlag = 0
+    </select>
 </mapper>

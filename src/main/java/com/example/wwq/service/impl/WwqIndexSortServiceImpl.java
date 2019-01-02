@@ -31,7 +31,7 @@ public class WwqIndexSortServiceImpl extends ServiceImpl<WwqIndexSortMapper, Wwq
     @Override
     public PageInfo<Map<String,Object>> ShopIndexSortList(Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<Map<String,Object>> list = wwqIndexSortMapper.shopIndexSortList(FileHeadHelper.FILE_HEAD);
+        List<Map<String,Object>> list = wwqIndexSortMapper.shopIndexSortList();
         PageInfo<Map<String,Object>> pageShopIndexSort = new PageInfo<Map<String,Object>>(list);
         return pageShopIndexSort;
     }

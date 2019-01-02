@@ -39,7 +39,7 @@
 			sp.product_name,
 			sp.product_now_price,
 			sp.product_orgin_price,
-			CONCAT(#{fileHead},spf.file_path) as file_path
+			spf.file_path as file_path
 		FROM
 			wwq_product AS sp
 		LEFT JOIN wwq_product_file AS spf ON sp.id = spf.product_id and spf.file_type = 0
@@ -57,7 +57,7 @@
 			sp.product_now_price,
 			sp.product_orgin_price,
 			sp.create_date,
-			CONCAT(#{fileHead},spf.file_path) as file_path
+			spf.file_path as file_path
 		FROM
 			wwq_product AS sp
 		LEFT JOIN wwq_product_file AS spf ON sp.id = spf.product_id and spf.file_type = 0
@@ -78,7 +78,7 @@
 			sp.product_name,
 			sp.product_now_price,
 			sp.product_orgin_price,
-			CONCAT(#{fileHead},spf.file_path) as file_path
+			spf.file_path as file_path
 		FROM
 			wwq_product AS sp
 		LEFT JOIN wwq_product_file AS spf ON sp.id = spf.product_id
@@ -90,7 +90,7 @@
     <select id="shopProductListInfo" resultType="java.util.Map" parameterType="java.util.Map">
         SELECT
             wp.id,wp.`product_name`,
-            CONCAT(#{fileHead},wpf.file_path) as file_path,
+            wpf.file_path as file_path,
             wp.`product_dec`,wp.`product_orgin_price` ,
             wp.`product_now_price`,
             wp.`sell_num`,
