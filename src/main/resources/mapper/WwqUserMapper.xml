@@ -27,4 +27,8 @@
         id, open_id AS openId, nickname, phone, headimgurl, sex, language, city, province, country, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, deleteFlag
     </sql>
 
+
+    <select id="getShopUserInfo" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT * FROM mks_user WHERE open_id = #{openid} and delete_flag = 0
+    </select>
 </mapper>

@@ -2,6 +2,10 @@ package com.example.wwq.service;
 
 import com.example.wwq.entity.WwqUser;
 import com.baomidou.mybatisplus.service.IService;
+import net.sf.json.JSONObject;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -13,4 +17,10 @@ import com.baomidou.mybatisplus.service.IService;
  */
 public interface IWwqUserService extends IService<WwqUser> {
 
+
+    Map<String, Object> saveUserInfo(JSONObject userInfo);
+
+    boolean updateUserPhone(String phone,String userId);
+
+    WwqUser selectUserInfo(String userId);
 }

@@ -2,7 +2,6 @@ package com.example.wwq.service.impl;
 
 import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
 import com.example.wwq.entity.WwqIndexSort;
-import com.example.wwq.kit.FileHeadHelper;
 import com.example.wwq.mapper.WwqIndexSortMapper;
 import com.example.wwq.service.IWwqIndexSortService;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
@@ -10,7 +9,6 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

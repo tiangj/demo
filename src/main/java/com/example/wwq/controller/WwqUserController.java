@@ -1,9 +1,26 @@
 package com.example.wwq.controller;
 
 
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
+import com.aliyuncs.exceptions.ClientException;
+import com.example.wwq.entity.WwqUser;
+import com.example.wwq.kit.*;
+import com.example.wwq.service.IWwqUserService;
+import org.apache.http.client.ClientProtocolException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ResponseBody;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import net.sf.json.JSONObject;
 
 /**
  * <p>
@@ -17,5 +34,239 @@ import org.springframework.stereotype.Controller;
 @RequestMapping("/wwqUser")
 public class WwqUserController {
 
+
+        @Autowired
+        private WxLoginHelper wxLoginHelper;
+
+        @Autowired
+        private AuthorHelper authorHelper;
+
+        @Autowired
+        private IWwqUserService wwqUserService;
+
+        @Autowired
+        private SMSKit smsKit;
+
+
+        /**
+         * 微信授权
+         * @param req
+         * @param resp
+         * @return
+         * @throws IOException
+         */
+        @SuppressWarnings("deprecation")
+        @RequestMapping("/weLogin")
+        @ResponseBody
+        public String wxChat(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+            /**
+             * 1、获取返回的回调地址
+             * 2、http://636.hnguwei.com是当前的外网地址
+             * */
+            String reutrnURl = "http://www.yzvpf1314.com:8080/demo/wwqUser/wxCallBack.do";
+            //第一步：用户同意授权，获取code
+            String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + WeCahtUtils.APPID
+                    + "&redirect_uri=" + URLEncoder.encode(reutrnURl)
+                    + "&response_type=code"
+                    + "&scope=snsapi_userinfo"
+                    + "&state=STATE#wechat_redirect";
+            //进行重定向
+            resp.sendRedirect(url);
+            return null;
+        }
+        /*
+         * ram resp
+         * @param code
+         * @throws ClientProtocolException
+         * @throws IOException
+         */
+        @RequestMapping(value="/wxCallBack",produces="text/html;charset=UTF-8")
+        @ResponseBody
+        public void callBack(HttpServletResponse resp,String code) throws ClientProtocolException,
+                IOException {
+            System.out.println("code-----------------:"+code);
+            String access_token;
+            String openid;
+            boolean b = wxLoginHelper.getCode(code);
+            if(b){
+                String userInfo = wxLoginHelper.getUserInfo(code).toString();
+                System.out.println("userInfo:----------->"+userInfo);
+                JSONObject jsonObject = JSONObject.fromObject(userInfo);
+                access_token = jsonObject.getString("access_token");
+                openid = jsonObject.getString("openid");
+            }else{
+                // 请求方法 和参数
+                String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="
+                        + WeCahtUtils.APPID + "&secret=" + WeCahtUtils.APPSECRET
+                        + "&code=" + code + "&grant_type=authorization_code";
+                JSONObject jsonObject = WeCahtUtils.getJSONObject(url);
+                wxLoginHelper.setUserInfo(code, jsonObject.toString());
+                access_token = jsonObject.getString("access_token");
+                openid = jsonObject.getString("openid");
+            }
+            // 4 第四步：拉取用户信息(需scope为 snsapi_userinfo)
+            String returnUrl = "https://api.weixin.qq.com/sns/userinfo?access_token="
+                    + access_token + "&openid=" + openid + "&lang=zh_CN";
+            JSONObject userInfo = WeCahtUtils.getJSONObject(returnUrl);
+            Map<String, Object> retMap = wwqUserService.saveUserInfo(userInfo);
+            System.out.println("retMap =====" +userInfo);
+            //控制页面跳转
+            if (retMap == null || retMap.size() < 1) {
+                resp.sendRedirect("http://hn.zhongbohn.com/user");
+            } else {
+                if(Integer.parseInt(retMap.get("code").toString()) == 200){
+                    List<Map<String, Object>> userList = (List<Map<String, Object>>) retMap.get("userList1");
+                    String userToken = (String) userList.get(0).get("id");
+                    resp.sendRedirect("http://www.yzvpf1314.com:8080/user?token="+userToken);
+                }else{
+                    // 得到用户id
+                    @SuppressWarnings("unchecked")
+                    List<Map<String, Object>> userList = (List<Map<String, Object>>) retMap.get("userList1");
+                    // 生成token
+                    ///String token = authorHelper.setSession(userList.get(0));
+                    //resp.sendRedirect("http://www.yzvpf1314.com:8080/login?token="+token);
+                }
+            }
+        }
+
+
+    /**
+     * 图片验证码
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping(value="/captchaUtil",produces="text/html;charset=UTF-8")
+    @ResponseBody
+    public String getCaptchaUtil(HttpServletResponse resp) throws IOException{
+        Map<String, Object> map = ValidateCode.generateImageCode(4, 4, null, 90, 30, 0, false, null, new Color(59, 162, 9), null);
+        String codeKey = java.util.UUID.randomUUID().toString().replaceAll("-", "");
+        authorHelper.setCaptcha(map.get("textCode").toString(), codeKey);
+        Map<String, Object> retMap = new HashMap<String, Object>();
+        retMap.put("code", map.get("textCode"));
+        retMap.put("codeKey", codeKey);
+        retMap.put("bim", "data:image/jpg;base64,"+map.get("bufferedImage"));
+        return JSONResult.init(200, "success",retMap);
+    }
+
+
+    /**
+     * 发送短信验证码
+     * @param phone
+     * @param code
+     * @param codeKey
+     * @return
+     */
+    @RequestMapping(value="/sendMsg",produces="text/html;charset=UTF-8")
+    @ResponseBody
+    public String sendMsg(String phone,String code,String codeKey){
+        String redisCode = authorHelper.getCaptcha(codeKey);
+        if(redisCode == null){
+            return JSONResult.init(501, "图片验证码错误！");
+        }
+        if(!redisCode.equals(code)){
+            return JSONResult.init(501, "图片验证码错误！");
+        }
+        String phoneCode = ValidateCode.generateTextCode(0, 6, null);
+        try {
+            @SuppressWarnings("static-access")
+            SendSmsResponse response = smsKit.sendSms(phone, phoneCode);
+            if(response == null){
+                return JSONResult.init(500, "短信发送失败！");
+            }
+            if(!response.getCode().equals("OK")){
+                return JSONResult.init(500, "短信发送失败！");
+            }
+        } catch (ClientException e) {
+            e.printStackTrace();
+            return JSONResult.init(500, "短信发送失败！");
+        }
+        //保存短信验证码到redis
+        String smsCode = java.util.UUID.randomUUID().toString().replaceAll("-", "");
+        authorHelper.setCaptcha(phoneCode, smsCode);
+        Map<String, String> retMap = new HashMap<String, String>();
+        retMap.put("code", phoneCode);
+        retMap.put("smsCode", smsCode);
+        return JSONResult.init(200, "success",retMap);
+    }
+
+
+    /**
+     * 注册
+     * @param phone
+     * @param code
+     * @param smsCode
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping(value="/regist",produces="text/html;charset=UTF-8")
+    @ResponseBody
+    public String regist(HttpServletRequest req,String phone,String code,String smsCode) throws IOException{
+        String smsRedisCode = authorHelper.getCaptcha(smsCode);
+        if(smsRedisCode == null){
+            return JSONResult.init(501, "短信验证码错误！");
+        }
+        if(!smsRedisCode.equals(code)){
+            return JSONResult.init(501, "短信验证码错误！");
+        }
+        String userId = authorHelper.getUserId(req);
+        if(userId == null){
+            return JSONResult.init(301, "用户未授权!");
+        }
+        //保存手机号到数据库
+        boolean b = wwqUserService.updateUserPhone(phone, userId);
+        if(b){
+            //获取用户信息
+            WwqUser retList = wwqUserService.selectUserInfo(userId);
+            if (retList == null) {
+                return JSONResult.init(500, "手机号绑定失败!");
+            } else {
+                // 生成token
+                String token = authorHelper.setSession(retList);
+//				retList.get(0).put("token", token);
+                return JSONResult.init(200, "success!",token);
+            }
+        }else{
+            return JSONResult.init(500, "信息验证有误！");
+        }
+    }
+
+
+    /**
+     * 退出登录
+     * @return
+     */
+    public String loginOut(HttpServletRequest req){
+        String token = req.getHeader("UserToken");
+        if(token == null){
+            return JSONResult.init(300, "用户未登录！");
+        }
+        boolean b = authorHelper.del(token);
+        if(b){
+            return JSONResult.init(200, "success",b);
+        }else{
+            return JSONResult.init(500, "fails",b);
+        }
+    }
+
+
+
+    /**
+     * 用户信息
+     * @param req
+     * @return
+     */
+    @RequestMapping(value="/userInfo",produces="text/html;charset=UTF-8")
+    @ResponseBody
+    public String userInfo(HttpServletRequest req){
+        String userId = authorHelper.getUserId(req);
+        if(userId == null){
+            return JSONResult.init(301, "用户未登录!");
+        }
+        WwqUser user = wwqUserService.selectUserInfo(userId);
+        if(user == null){
+            return JSONResult.init(301, "用户未登录！");
+        }
+        return JSONResult.init(200, "success",user);
+    }
 }
 

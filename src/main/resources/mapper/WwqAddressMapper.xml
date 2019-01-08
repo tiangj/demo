@@ -46,7 +46,7 @@
 
 
     <select id="getCityCodeList" resultType="java.util.Map" parameterType="java.util.Map">
-        select id,name,level from shop_area
+        select id,name,level from wwq_area
         where
         <if test="id == 0">
             parent_id = 0
@@ -57,7 +57,7 @@
     </select>
 
     <select id="getDefaultAddress" resultType="com.example.wwq.entity.WwqAddress">
-        select * from shop_address as sa WHERE sa.default_address = 1 and sa.delete_flag = 0
+        select * from wwq_address as sa WHERE sa.default_address = 1 and sa.delete_flag = 0
     </select>
 
 </mapper>

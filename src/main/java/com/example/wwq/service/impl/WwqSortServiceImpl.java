@@ -2,7 +2,6 @@ package com.example.wwq.service.impl;
 
 import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
 import com.example.wwq.entity.WwqSort;
-import com.example.wwq.kit.FileHeadHelper;
 import com.example.wwq.mapper.WwqSortMapper;
 import com.example.wwq.service.IWwqSortService;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
@@ -31,7 +30,7 @@ public class WwqSortServiceImpl extends ServiceImpl<WwqSortMapper, WwqSort> impl
    @Override
     public PageInfo<Map<String, Object>> shopSortList(Integer pageNum, Integer pageSize){
         PageHelper.startPage(pageNum, pageSize);
-        List<Map<String,Object>> list = wwqSortMapper.shopSortList(FileHeadHelper.FILE_HEAD);
+        List<Map<String,Object>> list = wwqSortMapper.shopSortList();
         PageInfo<Map<String,Object>> pageShopSort = new PageInfo<Map<String,Object>>(list);
         return pageShopSort;
     }
@@ -39,7 +38,6 @@ public class WwqSortServiceImpl extends ServiceImpl<WwqSortMapper, WwqSort> impl
     @Override
     public Map<String,Object> shopSortSecondInfo(String id){
         Map<String, Object> example = new HashMap<String, Object>();
-        example.put("fileHead", FileHeadHelper.FILE_HEAD);
         example.put("id", id);
         Map<String,Object> map = wwqSortMapper.shopSortSecondInfo(example);
         return map;

@@ -20,6 +20,6 @@
     </sql>
 
     <select id="shopBannerList" resultType="java.util.Map" parameterType="java.lang.String">
-        SELECT id, CONCAT(#{fileHead},file_path) as file_path FROM wwq_banner WHERE delete_flag=0
+        SELECT id, file_path as file_path FROM wwq_banner WHERE delete_flag=0
     </select>
 </mapper>

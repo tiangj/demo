@@ -153,7 +153,7 @@
 			sp.product_name,
 			sp.product_now_price,
 			sp.product_type,
-			CONCAT(#{fileHead},spf.file_path) as file_path
+			spf.file_path as file_path
 		FROM
 			wwq_cart AS sc
 		LEFT JOIN wwq_product as sp on sp.id = sc.product_id

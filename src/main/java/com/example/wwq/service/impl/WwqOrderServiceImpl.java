@@ -1,25 +1,10 @@
 package com.example.wwq.service.impl;
 
-import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
-import com.example.wwq.entity.WwqCart;
-import com.example.wwq.entity.WwqMember;
 import com.example.wwq.entity.WwqOrder;
-import com.example.wwq.kit.FileHeadHelper;
-import com.example.wwq.mapper.WwqCartMapper;
-import com.example.wwq.mapper.WwqMemberMapper;
 import com.example.wwq.mapper.WwqOrderMapper;
-import com.example.wwq.mapper.WwqProductMapper;
 import com.example.wwq.service.IWwqOrderService;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.github.pagehelper.PageInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>

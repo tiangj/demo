@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
 import com.example.wwq.entity.WwqCart;
 import com.example.wwq.entity.WwqMember;
 import com.example.wwq.entity.WwqProduct;
-import com.example.wwq.kit.FileHeadHelper;
 import com.example.wwq.mapper.WwqCartMapper;
 import com.example.wwq.mapper.WwqMemberMapper;
 import com.example.wwq.mapper.WwqProductMapper;
@@ -92,7 +91,6 @@ public class WwqCartServiceImpl extends ServiceImpl<WwqCartMapper, WwqCart> impl
         PageHelper.startPage(pageNum, pageSize);
         Map<String,Object> example = new HashMap<>();
         example.put("userId", userId);
-        example.put("fileHead", FileHeadHelper.FILE_HEAD);
         List<Map<String, Object>> shopCartList = wwqCartMapper.shopProductCartList(example);
         PageInfo<Map<String,Object>> pageShopCart = new PageInfo<>(shopCartList);
         retMap.put("pageShopCart", pageShopCart);

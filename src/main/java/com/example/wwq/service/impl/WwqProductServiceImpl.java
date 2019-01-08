@@ -6,7 +6,6 @@ import com.example.wwq.DO.ProductAddDO;
 import com.example.wwq.DO.ProductDO;
 import com.example.wwq.entity.WwqProduct;
 import com.example.wwq.entity.WwqProductDetail;
-import com.example.wwq.kit.FileHeadHelper;
 import com.example.wwq.mapper.WwqProductDetailMapper;
 import com.example.wwq.mapper.WwqProductFileMapper;
 import com.example.wwq.mapper.WwqProductMapper;

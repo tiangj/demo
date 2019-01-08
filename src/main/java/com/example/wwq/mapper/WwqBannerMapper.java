@@ -16,5 +16,5 @@ import java.util.Map;
  */
 public interface WwqBannerMapper extends BaseMapper<WwqBanner> {
 
-    List<Map<String,Object>> shopBannerList(String fileHead);
+    List<Map<String,Object>> shopBannerList();
 }
