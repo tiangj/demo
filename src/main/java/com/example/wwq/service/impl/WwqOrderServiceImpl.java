@@ -1,15 +1,12 @@
 package com.example.wwq.service.impl;
 
-import com.example.wwq.entity.WwqCart;
-import com.example.wwq.entity.WwqOrder;
-import com.example.wwq.entity.WwqOrderDetail;
-import com.example.wwq.entity.WwqProduct;
-import com.example.wwq.mapper.WwqCartMapper;
-import com.example.wwq.mapper.WwqOrderDetailMapper;
-import com.example.wwq.mapper.WwqOrderMapper;
-import com.example.wwq.mapper.WwqProductMapper;
+import com.example.wwq.entity.*;
+import com.example.wwq.mapper.*;
 import com.example.wwq.service.IWwqOrderService;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,170 +37,199 @@ public class WwqOrderServiceImpl extends ServiceImpl<WwqOrderMapper, WwqOrder> i
 
     @Autowired
     private WwqOrderDetailMapper wwqOrderDetailMapper;
-//
-//    @Autowired
-//    private WwqOrderMapper wwqOrderMapper;
-//
-//    @Autowired
-//    private WwqCartMapper wwqCartMapper;
-//
-//    @Autowired
-//    private WwqProductMapper wwqProductMapper;
-//
-//    @Autowired
-//    private WwqMemberMapper wwqMemberMapper;
-//
-//    @Override
-//    public List<Map<String, Object>> addShopCartProductCartPreOrder(String ids,String userId) {
-//        List<Map<String, Object>> retList  = new ArrayList<Map<String,Object>>();
-//        String[] shopCartIds = ids.split(",");
-//        for(int i = 0 ; i < shopCartIds.length ; i ++){
-//            //查询购物车信息
-//            WwqCart shopCart = wwqCartMapper.selectCartInfoByKey(shopCartIds[i]);
-//            if(shopCart == null){
-//                return null;
+
+    @Autowired
+    private WwqProductFileMapper wwqProductFileMapper;
+
+    @Autowired
+    private WwqPayMapper wwqPayMapper;
+
+    @Autowired
+    private WwqAddressMapper wwqAddressMapper;
+
+    @Override
+    public List<Map<String, Object>> addShopCartProductCartPreOrder(String ids,String userId) {
+        List<Map<String, Object>> retList  = new ArrayList<Map<String,Object>>();
+        String[] shopCartIds = ids.split(",");
+        for(int i = 0 ; i < shopCartIds.length ; i ++){
+            //查询购物车信息
+            WwqCart shopCart = wwqCartMapper.selectCartInfoByKey(shopCartIds[i]);
+            if(shopCart == null){
+                return null;
+            }
+            //查询商品信息
+            WwqProduct wwqProduct = wwqProductMapper.selectProductInfoByKey(shopCart.getProductId());
+            if(wwqProduct == null) {
+                return null;
+            }
+            //查询商品logo
+            WwqProductFile wwqProductFile = new WwqProductFile();
+            wwqProductFile.setFileType(0);
+            wwqProductFile.setProductId(wwqProduct.getId());
+            WwqProductFile wwqProductFile1 = wwqProductFileMapper.selectOne(wwqProductFile);
+            if(wwqProductFile1 == null) {
+                return null;
+            }
+            System.out.println("商品总价跟购物车中的价格相同");
+            //验证商品总价是否跟购物车中的价格相同
+            BigDecimal totalPrice = wwqProduct.getProductNowPrice().multiply(new BigDecimal(shopCart.getBuyNum()));
+            BigDecimal price =  wwqProduct.getProductNowPrice();
+            if(totalPrice.compareTo(shopCart.getTotalPrice()) != 0){
+                System.out.println("商品总价跟购物车中的价格不同！totalPrice："+totalPrice+"shopCart.getTotalPrice()"+shopCart.getTotalPrice());
+                return null;
+            }
+            Map<String, Object> preOrder = new HashMap<>();
+            preOrder.put("shopCartId", shopCartIds[i]);
+            preOrder.put("shopCartNum", shopCart.getBuyNum());
+            preOrder.put("filePath", wwqProductFile1.getFilePath());
+            preOrder.put("productName", wwqProduct.getProductName());
+            preOrder.put("totalPrice", price);
+            preOrder.put("productType", wwqProduct.getProductType());
+            retList.add(preOrder);
+        }
+        return retList;
+    }
+
+
+    @Override
+    public Map<String, Object> addProductToOrder(String id,Integer buyNum,String userId) {
+        //查询商品信息
+        //查询商品信息
+        WwqProduct wwqProduct = wwqProductMapper.selectProductInfoByKey(id);
+        if(wwqProduct == null) {
+            return null;
+        }
+        //查询商品logo
+        WwqProductFile wwqProductFile = new WwqProductFile();
+        wwqProductFile.setFileType(0);
+        wwqProductFile.setProductId(wwqProduct.getId());
+        WwqProductFile wwqProductFile1 = wwqProductFileMapper.selectOne(wwqProductFile);
+        if(wwqProductFile1 == null) {
+            return null;
+        }
+        //验证商品总价是否跟购物车中的价格相同
+        BigDecimal totalPrice = wwqProduct.getProductNowPrice().multiply(new BigDecimal(buyNum));
+        BigDecimal price =  wwqProduct.getProductNowPrice();
+        Map<String, Object> preOrder = new HashMap<String, Object>();
+        preOrder.put("productId", id);
+        preOrder.put("buyNum", buyNum);
+        preOrder.put("filePath", wwqProductFile1.getFilePath());
+        preOrder.put("productName", wwqProduct.getProductName());
+        preOrder.put("totalPrice", price);
+        preOrder.put("productType", wwqProduct.getProductType());
+        return preOrder;
+    }
+
+
+    @Override
+    public PageInfo<Map<String, Object>> shopProductOrderList(String userId, Integer orderStatus, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        Map<String,Object> example = new HashMap<String, Object>();
+        example.put("interface", "shopPayList");
+        example.put("payStatus", orderStatus);
+        example.put("userId", userId);
+        List<Map<String, Object>> list = wwqOrderMapper.shopPayList(example);
+        if (list==null || list.size()<1) {
+            return null;
+        }
+        for (int i = 0; i < list.size(); i++) {
+            BigDecimal totalPostPrice = new BigDecimal(0);
+            Map<String,Object> example1 = new HashMap<String, Object>();
+            example1.put("orderStatus", list.get(i).get("pay_status").toString());
+            example1.put("payId", list.get(i).get("id").toString());
+            List<Map<String, Object>> lists = wwqOrderMapper.shopProductOrderList(example1);
+            for(int j = 0; j < lists.size(); j++){
+                totalPostPrice = totalPostPrice.add(new BigDecimal(lists.get(j).get("post_price").toString()));
+            }
+            list.get(i).put("preOrderList", lists);
+            list.get(i).put("totalPostPrice", totalPostPrice);
+        }
+        PageInfo<Map<String,Object>> pageShopProductOrder = new PageInfo<Map<String,Object>>(list);
+        return pageShopProductOrder;
+    }
+
+    /**
+     * 根据订单状态查询订单数量
+     */
+    @Override
+    public Map<String,Object> getStatusNumBystatus(String userId) {
+        Map<String, Object> retMap = new HashMap<String, Object>();
+        Map<String, Object> example = new HashMap<String, Object>();
+        example.put("interface", "getStatusNumBystatus");
+        example.put("orderStatus", 100);
+        example.put("userId", userId);
+        List<Map<String, Object>> status100 = wwqOrderMapper.getStatusNumBystatus(example);
+        Map<String, Object> example1 = new HashMap<String, Object>();
+        example1.put("orderStatus", 200);
+        example1.put("userId", userId);
+        List<Map<String, Object>> status200 = wwqOrderMapper.getStatusNumBystatus(example1);
+        Map<String, Object> example2 = new HashMap<String, Object>();
+        example2.put("orderStatus", 300);
+        example2.put("userId", userId);
+        List<Map<String, Object>> status300 = wwqOrderMapper.getStatusNumBystatus(example2);
+        Map<String, Object> example3 = new HashMap<String, Object>();
+        example3.put("orderStatus", 400);
+        example3.put("userId", userId);
+        List<Map<String, Object>> status400 = wwqOrderMapper.getStatusNumBystatus(example3);
+        retMap.put("status100", status100);
+        retMap.put("status200", status200);
+        retMap.put("status300", status300);
+        retMap.put("status400", status400);
+        return retMap;
+    }
+
+    @Override
+    public List<Map<String,Object>> shopProductOrderDetail(String userId,String orderId,Integer orderStatus) {
+        Map<String,Object> example = new HashMap<String, Object>();
+        example.put("interface", "shopPayInfo");
+        example.put("payStatus", orderStatus);
+        example.put("userId", userId);
+        List<Map<String,Object>> shopPay = wwqOrderMapper.shopPayInfo(example);
+        if (shopPay==null) {
+            return null;
+        }
+        Map<String,Object> example1 = new HashMap<String, Object>();
+        example1.put("payId", orderId);
+        List<Map<String, Object>> lists = wwqOrderMapper.shopProductOrderListById(example1);
+        if(lists == null || lists.size() < 1){
+            return null;
+        }
+        //计算运费
+        BigDecimal totalPostPrice = new BigDecimal(0);
+        BigDecimal postPrice = new BigDecimal(0);
+        for(int i = 0 ;i < lists.size(); i++){
+            WwqProduct product = wwqProductMapper.selectById(lists.get(i).get("product_id").toString());
+            if(product != null){
+                postPrice = product.getPostPrice();
+                totalPostPrice = totalPostPrice.add(postPrice);
+            }
+//            if(product.getPostPrice().compareTo(new BigDecimal(0)) == 0){
+//                postPrice = new BigDecimal(0);
+//            }else{
+                postPrice = new BigDecimal(0);
 //            }
-//            //查询商品信息
-//            Map<String, Object> example = new HashMap<>();
-//            example.put("id", shopCart.getProductId());
-//            example.put("fileHead", FileHeadHelper.FILE_HEAD);
-//            Map<String, Object> shopProductList = wwqProductMapper.shopProductListInfo(example);
-//            if(shopProductList == null || shopProductList.size() < 1) {
-//                return null;
-//            }
-//            System.out.println("商品总价跟购物车中的价格相同");
-//            //验证商品总价是否跟购物车中的价格相同
-//            // 查询会员情况
-//            WwqMember wwqMember = wwqMemberMapper.selectProductInfoByUserKey(userId);
-//            BigDecimal totalPrice;
-//            BigDecimal price;
-//            if(wwqMember == null){
-//                //非会员计算总价
-//                totalPrice = new BigDecimal(shopProductList.get("product_orgin_price").toString()).multiply(new BigDecimal(shopCart.getBuyNum()));
-//                price =  new BigDecimal(shopProductList.get("product_orgin_price").toString());
-//            }else {
-//                //会员计算总价
-//                totalPrice = new BigDecimal(shopProductList.get("product_now_price").toString()).multiply(new BigDecimal(shopCart.getBuyNum()));
-//                price =  new BigDecimal(shopProductList.get("product_now_price").toString());
-//            }
-//            if(totalPrice.compareTo(shopCart.getTotalPrice()) != 0){
-//                System.out.println("商品总价跟购物车中的价格不同！totalPrice："+totalPrice+"shopCart.getTotalPrice()"+shopCart.getTotalPrice());
-//                return null;
-//            }
-//            Map<String, Object> preOrder = new HashMap<>();
-//            preOrder.put("shopCartId", shopCartIds[i]);
-//            preOrder.put("shopCartNum", shopCart.getBuyNum());
-//            preOrder.put("filePath", shopProductList.get("file_path"));
-//            preOrder.put("productName", shopProductList.get("product_name"));
-//            preOrder.put("totalPrice", price);
-//            preOrder.put("productType", shopProductList.get("product_type"));
-//            retList.add(preOrder);
-//        }
-//        return retList;
-//    }
-//
-//
-//    @Override
-//    public Map<String, Object> addProductToOrder(String id,Integer buyNum,String userId) {
-//        //查询商品信息
-//        Map<String, Object> example = new HashMap<>();
-//        example.put("id", id);
-//        example.put("fileHead", FileHeadHelper.FILE_HEAD);
-//        Map<String, Object> shopProductList = wwqProductMapper.shopProductListInfo(example);
-//        if(shopProductList == null || shopProductList.size() < 1) {
-//            return null;
-//        }
-//        //验证商品总价是否跟购物车中的价格相同
-//        // 查询会员情况
-//        WwqMember wwqMember = wwqMemberMapper.selectProductInfoByUserKey(userId);
-//        BigDecimal totalPrice;
-//        BigDecimal price;
-//        if(wwqMember == null){
-//            //非会员计算总价
-//            totalPrice = new BigDecimal(shopProductList.get("product_orgin_price").toString()).multiply(new BigDecimal(buyNum));
-//            price =  new BigDecimal(shopProductList.get("product_orgin_price").toString());
-//        }else {
-//            //会员计算总价
-//            totalPrice = new BigDecimal(shopProductList.get("product_now_price").toString()).multiply(new BigDecimal(buyNum));
-//            price =  new BigDecimal(shopProductList.get("product_now_price").toString());
-//        }
-//        Map<String, Object> preOrder = new HashMap<String, Object>();
-//        preOrder.put("productId", id);
-//        preOrder.put("buyNum", buyNum);
-//        preOrder.put("filePath", shopProductList.get("file_path"));
-//        preOrder.put("productName", shopProductList.get("product_name"));
-//        preOrder.put("totalPrice", price);
-//        preOrder.put("productType", shopProductList.get("product_type"));
-//        return preOrder;
-//    }
-//
-//
-//    @Override
-//    public PageInfo<Map<String, Object>> shopProductOrderList(String userId, Integer orderStatus, Integer pageNum, Integer pageSize) {
-//        PageHelper.startPage(pageNum, pageSize);
-//        Map<String,Object> example = new HashMap<>();
-//        example.put("payStatus", orderStatus);
-//        example.put("userId", userId);
-//        List<Map<String, Object>> list = wwqOrderMapper.shopPayList(example);
-//        if (list==null || list.size()<1) {
-//            return null;
-//        }
-//        for (int i = 0; i < list.size(); i++) {
-//            BigDecimal totalPostPrice = new BigDecimal(0);
-//            Map<String,Object> example1 = new HashMap<>();
-//            example1.put("orderStatus", list.get(i).get("pay_status").toString());
-//            example1.put("payId", list.get(i).get("id").toString());
-//            example1.put("fileHead", FileHeadHelper.FILE_HEAD);
-//            List<Map<String, Object>> lists = wwqOrderMapper.shopProductOrderList(example1);
-//            for(int j = 0; j < lists.size(); j++){
-//                totalPostPrice = totalPostPrice.add(new BigDecimal(lists.get(j).get("post_price").toString()));
-//            }
-//            list.get(i).put("preOrderList", lists);
-//            list.get(i).put("totalPostPrice", totalPostPrice);
-//        }
-//        PageInfo<Map<String,Object>> pageShopProductOrder = new PageInfo<Map<String,Object>>(list);
-//        return pageShopProductOrder;
-//    }
-//
-//    /**
-//     * 根据订单状态查询订单数量
-//     */
-//    @Override
-//    public Map<String,Object> getStatusNumBystatus(String userId) {
-//        Map<String, Object> retMap = new HashMap<String, Object>();
-//        Map<String, Object> example = new HashMap<String, Object>();
-//        example.put("interface", "getStatusNumBystatus");
-//        example.put("orderStatus", 100);
-//        example.put("userId", userId);
-//        List<Map<String, Object>> status100 = wwqOrderMapper.getStatusNumBystatus(example);
-//        Map<String, Object> example1 = new HashMap<String, Object>();
-//        example1.put("orderStatus", 200);
-//        example1.put("userId", userId);
-//        List<Map<String, Object>> status200 = wwqOrderMapper.getStatusNumBystatus(example1);
-//        Map<String, Object> example2 = new HashMap<String, Object>();
-//        example2.put("orderStatus", 300);
-//        example2.put("userId", userId);
-//        List<Map<String, Object>> status300 = wwqOrderMapper.getStatusNumBystatus(example2);
-//        Map<String, Object> example3 = new HashMap<String, Object>();
-//        example3.put("orderStatus", 400);
-//        example3.put("userId", userId);
-//        List<Map<String, Object>> status400 = wwqOrderMapper.getStatusNumBystatus(example3);
-//        Map<String, Object> example4 = new HashMap<String, Object>();
-//        example4.put("orderStatus", 500);
-//        example4.put("userId", userId);
-//        List<Map<String, Object>> status500 = wwqOrderMapper.getStatusNumBystatus(example4);
-//        Map<String, Object> example5 = new HashMap<String, Object>();
-//        example5.put("orderStatus", 600);
-//        example5.put("userId", userId);
-//        List<Map<String, Object>> status600 = wwqOrderMapper.getStatusNumBystatus(example5);
-//        retMap.put("status100", status100);
-//        retMap.put("status200", status200);
-//        retMap.put("status300", status300);
-//        retMap.put("status400", status400);
-//        retMap.put("status500", status500);
-//        retMap.put("status600", status600);
-//        return retMap;
-//    }
+
+        }
+        shopPay.get(0).put("postPrice", postPrice);
+        shopPay.get(0).put("orderList", lists);
+        //判断是快递配送还是用户自提post_way_type
+        if(Integer.parseInt(lists.get(0).get("post_way_type").toString()) != 100) {
+            //获取用户默认收货地址
+            shopPay.get(0).put("addressInfo", this.shopProdectAddressInfo(lists.get(0).get("id").toString()));
+        }
+        return shopPay;
+    }
+
+    public Map<String, Object> shopProdectAddressInfo(String orderId){
+        Map<String,Object> example = new HashMap<String, Object>();
+        example.put("orderId", orderId);
+        List<Map<String,Object>> shopAddress = wwqAddressMapper.getUserAddressList(example);
+        if(shopAddress == null || shopAddress.size()<1){
+            return new HashMap<String, Object>();
+        }else{
+            return shopAddress.get(0);
+        }
+    }
 
 
     @Transactional
@@ -227,11 +253,6 @@ public class WwqOrderServiceImpl extends ServiceImpl<WwqOrderMapper, WwqOrder> i
             if(totalPrice.compareTo(shopCart.getTotalPrice()) != 0){
                 return null;
             }
-            //计算积分
-//            BigDecimal consumePoint = new BigDecimal(0);
-//            if(totalPrice.compareTo(new BigDecimal(500)) >= 0){
-//                consumePoint = new BigDecimal(500).multiply(totalPrice.divide(new BigDecimal(500)).setScale(0,java.math.BigDecimal.ROUND_DOWN)).multiply(new BigDecimal(1.8));
-//            }
             //添加订单
             WwqOrder shopOrder = new WwqOrder();
             shopOrder.setOrderNum(shopCart.getBuyNum());
@@ -293,11 +314,6 @@ public class WwqOrderServiceImpl extends ServiceImpl<WwqOrderMapper, WwqOrder> i
         if(wwqProduct == null){
             return null;
         }
-        //验证商品规格信息
-//        ShopProductType shopProductType = shopProductTypeMapper.selectByPrimaryKey(productTypeId);
-//        if(shopProductType == null){
-//            return null;
-//        }
         //计算总价
         BigDecimal totalPrice = wwqProduct.getProductNowPrice().multiply(new BigDecimal(buyNum));
 //		订单总价加上运费

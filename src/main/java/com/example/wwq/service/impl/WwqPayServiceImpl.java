@@ -47,6 +47,18 @@ public class WwqPayServiceImpl extends ServiceImpl<WwqPayMapper, WwqPay> impleme
     @Autowired
     private WwqOrderScoreMapper wwqOrderScoreMapper;
 
+    @Autowired
+    private WwqShareUserConcartMapper wwqShareUserConcartMapper;
+
+    @Autowired
+    private WwqUserShareAmountMapper wwqUserShareAmountMapper;
+
+    @Autowired
+    private WwqUserShareAmountDetailMapper wwqUserShareAmountDetailMapper;
+
+    @Autowired
+    private WwqShareCountMapper wwqShareCountMapper;
+
     @Transactional
     @Override
     public String creatPayOrderRecord(String userId, List<Map<String, Object>> orderList) {
@@ -173,7 +185,7 @@ public class WwqPayServiceImpl extends ServiceImpl<WwqPayMapper, WwqPay> impleme
             wwqOrderDetailMapper.insert(shopOrderDetail);
             //积分操作,建22条积分返现记录
             if(wwqPay.getConsumePoint() <= 0){
-                return false;
+                return true;
             }
             BigDecimal avPoint = new BigDecimal(wwqPay.getConsumePoint()).divide(new BigDecimal(22)).setScale(0,java.math.BigDecimal.ROUND_DOWN);
             for(int j = 0;j < 22;j++) {
@@ -192,7 +204,81 @@ public class WwqPayServiceImpl extends ServiceImpl<WwqPayMapper, WwqPay> impleme
             }
         }
         //分销返利
-        //查找当前下单用户的
+        //查找当前下单用户是否存在上级
+        //如果有上级，则上级直接拿3%的佣金
+        Map<String,Object> map = new HashMap<>();
+        map.put("userId",wwqPay.getUserId());
+        map.put("deleteFlag",0);
+        List<WwqShareUserConcart> list = wwqShareUserConcartMapper.selectByMap(map);
+        if(list == null || list.size()<1){
+            return true;
+        }
+        BigDecimal shareAmount = new BigDecimal(wwqPay.getTotalPrice()).multiply(new BigDecimal(0.3));
+        this.updateUserShareAmountConcart(list.get(0).getParentId(),shareAmount);
+        //查询当前用户的上级是否存在上级
+        Map<String,Object> map1 = new HashMap<>();
+        map1.put("userId",list.get(0).getParentId());
+        map1.put("deleteFlag",0);
+        List<WwqShareUserConcart> list1 = wwqShareUserConcartMapper.selectByMap(map);
+        if(list1 == null || list1.size()<1){
+            return true;
+        }
+        //如果存在，判断上级的上级是否有12个直接下级，以及所有一二级下级是否有120个人
+        Map<String,Object> map2 = new HashMap<>();
+        map2.put("userId",list.get(0).getParentId());
+        map2.put("deleteFlag",0);
+        List<WwqShareCount> list2 = wwqShareCountMapper.selectByMap(map);
+        if(list2 == null || list2.size()<1){
+            return true;
+        }
+        //如果符合这个条件，则上级的上级也拿走3%
+        if(list2.get(0).getFirstShareNum() > 12 && list2.get(0).getSecondShareNum() > 120){
+            this.updateUserShareAmountConcart(list1.get(0).getParentId(),shareAmount);
+        }
+        return true;
+    }
+
+
+    public boolean updateUserShareAmountConcart(String userId,BigDecimal shareAmount){
+        //查询当前用户是否有记录
+        Map<String,Object> map = new HashMap<>();
+        map.put("userId",userId);
+        map.put("deleteFlag",0);
+        List<WwqUserShareAmount> list = wwqUserShareAmountMapper.selectByMap(map);
+        if(list == null || list.size()<1){
+            WwqUserShareAmount amount = new WwqUserShareAmount();
+            amount.setCreateDate(new Date());
+            amount.setCreateUser(userId);
+            amount.setDeleteFlag(0);
+            amount.setHasWithdrawalAmount(new BigDecimal(0));
+            amount.setTotalShareAmount(shareAmount);
+            amount.setUpdateDate(new Date());
+            amount.setUpdateUser(userId);
+            amount.setWithdrawalAmount(shareAmount);
+            amount.setUserId(userId);
+            wwqUserShareAmountMapper.insert(amount);
+        }else if(list.size() == 1){
+            WwqUserShareAmount amount = list.get(0);
+            amount.setWithdrawalAmount(amount.getWithdrawalAmount().add(shareAmount));
+            amount.setTotalShareAmount(amount.getWithdrawalAmount().add(shareAmount));
+            amount.setUpdateDate(new Date());
+            amount.setUpdateUser(userId);
+            wwqUserShareAmountMapper.updateById(amount);
+        }else {
+            return false;
+        }
+        //插入分销明细
+        WwqUserShareAmountDetail wwqUserShareAmountDetail = new WwqUserShareAmountDetail();
+        wwqUserShareAmountDetail.setAmount(shareAmount);
+        wwqUserShareAmountDetail.setCreateDate(new Date());
+        wwqUserShareAmountDetail.setCreateUser(userId);
+        wwqUserShareAmountDetail.setDeleteFlag(0);
+        wwqUserShareAmountDetail.setStatus(200);
+        wwqUserShareAmountDetail.setType(1);
+        wwqUserShareAmountDetail.setUpdateDate(new Date());
+        wwqUserShareAmountDetail.setUpdateUser(userId);
+        wwqUserShareAmountDetail.setUserId(userId);
+        wwqUserShareAmountDetailMapper.insert(wwqUserShareAmountDetail);
         return true;
     }
 

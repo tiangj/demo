@@ -18,7 +18,11 @@ public interface WwqOrderMapper extends BaseMapper<WwqOrder> {
 
     List<Map<String,Object>> shopPayList(Map<String,Object> map);
 
-    List<Map<String,Object>>   shopProductOrderList(Map<String,Object> map);
+    List<Map<String,Object>> shopProductOrderList(Map<String,Object> map);
 
     List<Map<String,Object>> getStatusNumBystatus(Map<String, Object> example);
+
+    List<Map<String,Object>> shopPayInfo(Map<String,Object> map);
+
+    List<Map<String,Object>> shopProductOrderListById(Map<String,Object> map);
 }

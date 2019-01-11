@@ -71,7 +71,7 @@ public class MysqlGenerator {
                         // .setDbColumnUnderline(true)//全局下划线命名
                         //.setTablePrefix(new String[]{"sys_"})// 此处可以修改为您的表前缀
                         .setNaming(NamingStrategy.underline_to_camel)// 表名生成策略
-                        .setInclude(new String[] {"wwq_share_count"}) // 需要生成的表
+                        .setInclude(new String[] {"wwq_user_share_amount","wwq_user_share_amount_detail"}) // 需要生成的表
                         // .setExclude(new String[]{"test"}) // 排除生成的表
                         // 自定义实体父类
                         // .setSuperEntityClass("com.baomidou.demo.TestEntity")

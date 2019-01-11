@@ -22,4 +22,6 @@ public interface WwqAddressMapper extends BaseMapper<WwqAddress> {
     List<Map<String,Object>> getCityCodeList(Map<String,Object> map);
 
     WwqAddress getDefaultAddress();
+
+    List<Map<String,Object>> getUserAddressList(Map<String,Object> map);
 }

@@ -10,37 +10,32 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 商品文件表
+ * 分销用户关联表
  * </p>
  *
  * @author generator-plus123
- * @since 2018-12-29
+ * @since 2019-01-12
  */
-@TableName("wwq_product_file")
-public class WwqProductFile extends Model<WwqProductFile> {
+@TableName("wwq_share_user_concart")
+public class WwqShareUserConcart extends Model<WwqShareUserConcart> {
 
     private static final long serialVersionUID = 1L;
 
     private String id;
     /**
-     * 商品id
+     * 用户id
      */
-    @TableField("product_id")
-    private String productId;
+    @TableField("user_id")
+    private String userId;
     /**
-     * 商品logo
+     * 上级分销用户的id
      */
-    @TableField("file_path")
-    private String filePath;
-    /**
-     * 文件类型（0：logo;1：图文详情图片;2:商品详情图片）
-     */
-    @TableField("file_type")
-    private Integer fileType;
-    /**
-     * 备注
-     */
+    @TableField("parent_id")
+    private String parentId;
     private String remark;
+    /**
+     * 创建时间
+     */
     @TableField("create_date")
     private Date createDate;
     /**
@@ -59,9 +54,9 @@ public class WwqProductFile extends Model<WwqProductFile> {
     @TableField("update_user")
     private String updateUser;
     /**
-     * 是否删除
+     * 是否删除（0：未删除；1：已删除）
      */
-    @TableField("deleteFlag")
+    @TableField("delete_flag")
     private Integer deleteFlag;
 
 
@@ -73,28 +68,20 @@ public class WwqProductFile extends Model<WwqProductFile> {
         this.id = id;
     }
 
-    public String getProductId() {
-        return productId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public String getFilePath() {
-        return filePath;
+    public String getParentId() {
+        return parentId;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public Integer getFileType() {
-        return fileType;
-    }
-
-    public void setFileType(Integer fileType) {
-        this.fileType = fileType;
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 
     public String getRemark() {
@@ -147,11 +134,9 @@ public class WwqProductFile extends Model<WwqProductFile> {
 
     public static final String ID = "id";
 
-    public static final String PRODUCT_ID = "product_id";
+    public static final String USER_ID = "user_id";
 
-    public static final String FILE_PATH = "file_path";
-
-    public static final String FILE_TYPE = "file_type";
+    public static final String PARENT_ID = "parent_id";
 
     public static final String REMARK = "remark";
 
@@ -163,7 +148,7 @@ public class WwqProductFile extends Model<WwqProductFile> {
 
     public static final String UPDATE_USER = "update_user";
 
-    public static final String DELETEFLAG = "deleteFlag";
+    public static final String DELETE_FLAG = "delete_flag";
 
     @Override
     protected Serializable pkVal() {
@@ -172,11 +157,10 @@ public class WwqProductFile extends Model<WwqProductFile> {
 
     @Override
     public String toString() {
-        return "WwqProductFile{" +
+        return "WwqShareUserConcart{" +
         "id=" + id +
-        ", productId=" + productId +
-        ", filePath=" + filePath +
-        ", fileType=" + fileType +
+        ", userId=" + userId +
+        ", parentId=" + parentId +
         ", remark=" + remark +
         ", createDate=" + createDate +
         ", createUser=" + createUser +

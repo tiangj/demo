@@ -160,7 +160,7 @@
 		LEFT JOIN wwq_product_file AS spf ON sp.id = spf.product_id and spf.file_type = 0
 		LEFT JOIN wwq_user as su on su.id = sc.user_id
 		WHERE
-			sc.delete_flag = 0 and su.deleteFlag = 0 and su.id = #{userId}
+			sc.delete_flag = 0 and su.delete_flag = 0 and su.id = #{userId}
     </select>
 
     <select id="selectCartInfoByKey" resultType="com.example.wwq.entity.WwqCart" parameterType="java.lang.String">

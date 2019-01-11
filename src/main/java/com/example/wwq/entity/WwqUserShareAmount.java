@@ -2,6 +2,7 @@ package com.example.wwq.entity;
 
 import java.io.Serializable;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.activerecord.Model;
@@ -10,37 +11,41 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 商品文件表
+ * 用户分享返现统计表
  * </p>
  *
  * @author generator-plus123
- * @since 2018-12-29
+ * @since 2019-01-12
  */
-@TableName("wwq_product_file")
-public class WwqProductFile extends Model<WwqProductFile> {
+@TableName("wwq_user_share_amount")
+public class WwqUserShareAmount extends Model<WwqUserShareAmount> {
 
     private static final long serialVersionUID = 1L;
 
     private String id;
     /**
-     * 商品id
+     * 用户id
      */
-    @TableField("product_id")
-    private String productId;
+    @TableField("user_id")
+    private String userId;
     /**
-     * 商品logo
+     * 总分享返利金额
      */
-    @TableField("file_path")
-    private String filePath;
+    @TableField("total_share_amount")
+    private BigDecimal totalShareAmount;
     /**
-     * 文件类型（0：logo;1：图文详情图片;2:商品详情图片）
+     * 可提现金额
      */
-    @TableField("file_type")
-    private Integer fileType;
+    @TableField("withdrawal_amount")
+    private BigDecimal withdrawalAmount;
     /**
-     * 备注
+     * 已提现金额
      */
-    private String remark;
+    @TableField("has_withdrawal_amount")
+    private BigDecimal hasWithdrawalAmount;
+    /**
+     * 创建时间
+     */
     @TableField("create_date")
     private Date createDate;
     /**
@@ -61,7 +66,7 @@ public class WwqProductFile extends Model<WwqProductFile> {
     /**
      * 是否删除
      */
-    @TableField("deleteFlag")
+    @TableField("delete_flag")
     private Integer deleteFlag;
 
 
@@ -73,36 +78,36 @@ public class WwqProductFile extends Model<WwqProductFile> {
         this.id = id;
     }
 
-    public String getProductId() {
-        return productId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public String getFilePath() {
-        return filePath;
+    public BigDecimal getTotalShareAmount() {
+        return totalShareAmount;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    public void setTotalShareAmount(BigDecimal totalShareAmount) {
+        this.totalShareAmount = totalShareAmount;
     }
 
-    public Integer getFileType() {
-        return fileType;
+    public BigDecimal getWithdrawalAmount() {
+        return withdrawalAmount;
     }
 
-    public void setFileType(Integer fileType) {
-        this.fileType = fileType;
+    public void setWithdrawalAmount(BigDecimal withdrawalAmount) {
+        this.withdrawalAmount = withdrawalAmount;
     }
 
-    public String getRemark() {
-        return remark;
+    public BigDecimal getHasWithdrawalAmount() {
+        return hasWithdrawalAmount;
     }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public void setHasWithdrawalAmount(BigDecimal hasWithdrawalAmount) {
+        this.hasWithdrawalAmount = hasWithdrawalAmount;
     }
 
     public Date getCreateDate() {
@@ -147,13 +152,13 @@ public class WwqProductFile extends Model<WwqProductFile> {
 
     public static final String ID = "id";
 
-    public static final String PRODUCT_ID = "product_id";
+    public static final String USER_ID = "user_id";
 
-    public static final String FILE_PATH = "file_path";
+    public static final String TOTAL_SHARE_AMOUNT = "total_share_amount";
 
-    public static final String FILE_TYPE = "file_type";
+    public static final String WITHDRAWAL_AMOUNT = "withdrawal_amount";
 
-    public static final String REMARK = "remark";
+    public static final String HAS_WITHDRAWAL_AMOUNT = "has_withdrawal_amount";
 
     public static final String CREATE_DATE = "create_date";
 
@@ -163,7 +168,7 @@ public class WwqProductFile extends Model<WwqProductFile> {
 
     public static final String UPDATE_USER = "update_user";
 
-    public static final String DELETEFLAG = "deleteFlag";
+    public static final String DELETE_FLAG = "delete_flag";
 
     @Override
     protected Serializable pkVal() {
@@ -172,12 +177,12 @@ public class WwqProductFile extends Model<WwqProductFile> {
 
     @Override
     public String toString() {
-        return "WwqProductFile{" +
+        return "WwqUserShareAmount{" +
         "id=" + id +
-        ", productId=" + productId +
-        ", filePath=" + filePath +
-        ", fileType=" + fileType +
-        ", remark=" + remark +
+        ", userId=" + userId +
+        ", totalShareAmount=" + totalShareAmount +
+        ", withdrawalAmount=" + withdrawalAmount +
+        ", hasWithdrawalAmount=" + hasWithdrawalAmount +
         ", createDate=" + createDate +
         ", createUser=" + createUser +
         ", updateDate=" + updateDate +

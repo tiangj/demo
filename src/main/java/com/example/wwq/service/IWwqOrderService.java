@@ -18,15 +18,15 @@ import java.util.Map;
 public interface IWwqOrderService extends IService<WwqOrder> {
 
 
-//    List<Map<String, Object>> addShopCartProductCartPreOrder(String ids,String userId);
-//
-//    Map<String, Object> addProductToOrder(String id,Integer buyNum,String userId);
-//
-//    PageInfo<Map<String,Object>> shopProductOrderList(String userId, Integer orderStatus, Integer pageNum, Integer pageSize);
-//
-//    Map<String,Object> getStatusNumBystatus(String userId);
-//
-//    List<Map<String,Object>> shopProductOrderDetail(String userId,String orderId,Integer orderStatus);
+    List<Map<String, Object>> addShopCartProductCartPreOrder(String ids,String userId);
+
+    Map<String, Object> addProductToOrder(String id,Integer buyNum,String userId);
+
+    PageInfo<Map<String,Object>> shopProductOrderList(String userId, Integer orderStatus, Integer pageNum, Integer pageSize);
+
+    Map<String,Object> getStatusNumBystatus(String userId);
+
+    List<Map<String,Object>> shopProductOrderDetail(String userId,String orderId,Integer orderStatus);
 
 
     List<Map<String, Object>> addShopProductCartOrder(String userId,String ids,Integer postWayType,String postDateId,Integer payWay,String remark,String addressId);

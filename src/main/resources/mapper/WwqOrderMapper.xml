@@ -37,11 +37,12 @@
     <select id="shopPayList" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT
         pay.id,
-        pay.pay_status
+        pay.pay_status,
+        pay.total_price
         FROM
         wwq_pay AS pay
         where pay.user_id = #{userId}
-        and pay.deleteFlag = 0
+        and pay.delete_flag = 0
         <if test="payStatus ==0">
             and 1=1
         </if>
@@ -55,15 +56,15 @@
         so.id as id,
         so.product_id,
         sp.product_name as productName,
-        CONCAT(#{fileHead},spf.file_path) as filePath,
-        spt.product_now_price AS productNowPrice,
-        spt.product_orgin_price AS productOrginPrice,
-        spt.product_type as productType,
+        spf.file_path as filePath,
+        sp.product_now_price AS productNowPrice,
+        sp.product_orgin_price AS productOrginPrice,
+        sp.product_type as productType,
         sp.post_price AS postPrice,
         so.order_num AS orderNum,
         so.post_way_type,
         so.order_total_price,
-        sp.post_price
+        ifnull(sp.post_price,0) as post_price
         FROM
         wwq_pay_detail AS spd
         LEFT JOIN wwq_order AS so ON so.id = spd.order_id
@@ -86,6 +87,49 @@
 		AND
 			sp.pay_status = #{orderStatus}
 		AND
-			sp.deleteFlag = 0
+			sp.delete_flag = 0
     </select>
+
+    <select id="shopPayInfo" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        pay.id,
+        spd.order_id,
+        pay.total_price,
+        pay.pay_status,
+        pay.create_date
+        FROM
+        wwq_pay AS pay
+        LEFT JOIN wwq_pay_detail as spd ON spd.pay_id = pay.id
+        where pay.pay_status = #{payStatus}
+        and pay.user_id = #{userId}
+    </select>
+
+
+    <select id="shopProductOrderListById" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        so.id as id,
+        so.product_id,
+        sp.product_name as productName,
+        spf.file_path as filePath,
+        sp.product_now_price AS productNowPrice,
+        sp.product_orgin_price AS productOrginPrice,
+        sp.product_type as productType,
+        ifnull(sp.post_price,0) AS postPrice,
+        so.order_num AS orderNum,
+        so.post_way_type,
+        so.order_total_price,
+        sp.post_price,
+        so.create_date
+        FROM
+        wwq_pay_detail AS spd
+        LEFT JOIN wwq_order AS so ON so.id = spd.order_id
+        LEFT JOIN wwq_product AS sp ON so.product_id = sp.id
+        LEFT JOIN wwq_product_file AS spf ON spf.product_id = sp.id and spf.file_type = 0
+        WHERE spd.pay_id = #{payId}
+        <if test="orderStatus != null">
+            AND so.order_status = #{orderStatus}
+        </if>
+        order by so.create_date desc
+    </select>
+
 </mapper>

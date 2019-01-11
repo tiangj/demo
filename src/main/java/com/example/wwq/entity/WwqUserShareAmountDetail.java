@@ -2,6 +2,7 @@ package com.example.wwq.entity;
 
 import java.io.Serializable;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.activerecord.Model;
@@ -10,37 +11,35 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 商品文件表
+ * 用户分享返利提现明细表
  * </p>
  *
  * @author generator-plus123
- * @since 2018-12-29
+ * @since 2019-01-12
  */
-@TableName("wwq_product_file")
-public class WwqProductFile extends Model<WwqProductFile> {
+@TableName("wwq_user_share_amount_detail")
+public class WwqUserShareAmountDetail extends Model<WwqUserShareAmountDetail> {
 
     private static final long serialVersionUID = 1L;
 
     private String id;
+    @TableField("user_id")
+    private String userId;
     /**
-     * 商品id
+     * 类型（1：分享返现；2：提现）
      */
-    @TableField("product_id")
-    private String productId;
+    private Integer type;
     /**
-     * 商品logo
+     * 涉及金额
      */
-    @TableField("file_path")
-    private String filePath;
+    private BigDecimal amount;
     /**
-     * 文件类型（0：logo;1：图文详情图片;2:商品详情图片）
+     * 操作状态（100：申请中；2：已完成”），只有提现才有这个值，分享返利是默认写死200
      */
-    @TableField("file_type")
-    private Integer fileType;
+    private Integer status;
     /**
-     * 备注
+     * 创建时间
      */
-    private String remark;
     @TableField("create_date")
     private Date createDate;
     /**
@@ -61,7 +60,7 @@ public class WwqProductFile extends Model<WwqProductFile> {
     /**
      * 是否删除
      */
-    @TableField("deleteFlag")
+    @TableField("delete_flag")
     private Integer deleteFlag;
 
 
@@ -73,36 +72,36 @@ public class WwqProductFile extends Model<WwqProductFile> {
         this.id = id;
     }
 
-    public String getProductId() {
-        return productId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public String getFilePath() {
-        return filePath;
+    public Integer getType() {
+        return type;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    public void setType(Integer type) {
+        this.type = type;
     }
 
-    public Integer getFileType() {
-        return fileType;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setFileType(Integer fileType) {
-        this.fileType = fileType;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
-    public String getRemark() {
-        return remark;
+    public Integer getStatus() {
+        return status;
     }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public Date getCreateDate() {
@@ -147,13 +146,13 @@ public class WwqProductFile extends Model<WwqProductFile> {
 
     public static final String ID = "id";
 
-    public static final String PRODUCT_ID = "product_id";
+    public static final String USER_ID = "user_id";
 
-    public static final String FILE_PATH = "file_path";
+    public static final String TYPE = "type";
 
-    public static final String FILE_TYPE = "file_type";
+    public static final String AMOUNT = "amount";
 
-    public static final String REMARK = "remark";
+    public static final String STATUS = "status";
 
     public static final String CREATE_DATE = "create_date";
 
@@ -163,7 +162,7 @@ public class WwqProductFile extends Model<WwqProductFile> {
 
     public static final String UPDATE_USER = "update_user";
 
-    public static final String DELETEFLAG = "deleteFlag";
+    public static final String DELETE_FLAG = "delete_flag";
 
     @Override
     protected Serializable pkVal() {
@@ -172,12 +171,12 @@ public class WwqProductFile extends Model<WwqProductFile> {
 
     @Override
     public String toString() {
-        return "WwqProductFile{" +
+        return "WwqUserShareAmountDetail{" +
         "id=" + id +
-        ", productId=" + productId +
-        ", filePath=" + filePath +
-        ", fileType=" + fileType +
-        ", remark=" + remark +
+        ", userId=" + userId +
+        ", type=" + type +
+        ", amount=" + amount +
+        ", status=" + status +
         ", createDate=" + createDate +
         ", createUser=" + createUser +
         ", updateDate=" + updateDate +

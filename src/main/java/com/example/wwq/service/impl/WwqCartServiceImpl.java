@@ -135,7 +135,7 @@ public class WwqCartServiceImpl extends ServiceImpl<WwqCartMapper, WwqCart> impl
         WwqCart shopCart = new WwqCart();
         shopCart.setId(shopCartId);
         shopCart.setDeleteFlag(1);
-        return wwqCartMapper.updateShopCartRecordById(shopCart);
+        return wwqCartMapper.updateById(shopCart);
     }
 
 

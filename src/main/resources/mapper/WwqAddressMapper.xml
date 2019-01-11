@@ -60,4 +60,15 @@
         select * from wwq_address as sa WHERE sa.default_address = 1 and sa.delete_flag = 0
     </select>
 
+
+    <select id="getUserAddressList" resultType="java.util.Map" parameterType="java.util.Map">
+           select sa.id,
+					sa.address,
+					sa.concat_name,
+					sa.default_address,
+					sa.phone,
+					sa.code
+from wwq_address as sa LEFT JOIN wwq_order as so on so.address_id = sa.id where so.id = #{orderId} and so.delete_flag = 0
+    </select>
+
 </mapper>
