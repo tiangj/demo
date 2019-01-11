@@ -1,5 +1,6 @@
 package com.example.wwq.service;
 
+import com.example.wwq.entity.WwqIntegral;
 import com.example.wwq.entity.WwqUserScore;
 import com.baomidou.mybatisplus.service.IService;
 
@@ -12,5 +13,7 @@ import com.baomidou.mybatisplus.service.IService;
  * @since 2018-12-29
  */
 public interface IWwqUserScoreService extends IService<WwqUserScore> {
+
+    WwqUserScore getUserIntegral(String userId);
 
 }

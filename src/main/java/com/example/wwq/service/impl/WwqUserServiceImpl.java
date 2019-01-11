@@ -1,13 +1,18 @@
 package com.example.wwq.service.impl;
 
+import com.example.wwq.entity.WwqShareCount;
 import com.example.wwq.entity.WwqUser;
+import com.example.wwq.mapper.WwqShareCountMapper;
 import com.example.wwq.mapper.WwqUserMapper;
 import com.example.wwq.service.IWwqUserService;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.example.wwq.wx.Util.WechatKit;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.stream.FileImageOutputStream;
 import java.util.*;
 
 /**
@@ -23,6 +28,15 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
 
     @Autowired
     private WwqUserMapper wwqUserMapper;
+
+    @Autowired
+    private WwqShareCountMapper wwqShareCountMapper;
+
+    @Value("${upload.file.path}")
+    private String uploadFolder;
+
+    @Value("${file.staticAccessPath}")
+    private String staticAccessPath;
 
     @Override
     public Map<String, Object> saveUserInfo(JSONObject userInfo) {
@@ -93,10 +107,29 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
 
     @Override
     public boolean updateUserPhone(String phone, String userId) {
-        WwqUser shopUser = new WwqUser();
-        shopUser.setPhone(phone);
-        shopUser.setId(userId);
-        wwqUserMapper.updateById(shopUser);
+        try {
+            WwqUser shopUser = new WwqUser();
+            shopUser.setPhone(phone);
+            shopUser.setId(userId);
+            String filePath = uploadFolder+"/"+userId+".jpg";
+            String wxCode = WechatKit.productWxCodeUtil(userId,filePath);
+            shopUser.setWxCode(wxCode);
+            wwqUserMapper.updateById(shopUser);
+            WwqShareCount wwqShareCount = new WwqShareCount();
+            wwqShareCount.setUserId(userId);
+            wwqShareCount.setCreateDate(new Date());
+            wwqShareCount.setCreateUser(userId);
+            wwqShareCount.setDeleteFlag(0);
+            wwqShareCount.setUserId(userId);
+            wwqShareCount.setFirstShareNum(0);
+            wwqShareCount.setSecondShareNum(0);
+            wwqShareCount.setUserLevel(1);
+            wwqShareCount.setUpdateDate(new Date());
+            wwqShareCount.setUpdateUser(userId);
+            wwqShareCountMapper.insert(wwqShareCount);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return true;
     }
 
@@ -106,5 +139,23 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
     public WwqUser selectUserInfo(String userId) {
         WwqUser user = wwqUserMapper.selectById(userId);
         return  user;
+    }
+
+
+    @Override
+    public Map<String,Object> selectUserInfo1(String userId) {
+        Map<String,Object> map = new HashMap<>();
+        WwqUser user = wwqUserMapper.selectById(userId);
+        //查询用户身份
+        WwqShareCount shareCount1 = new WwqShareCount();
+        shareCount1.setUserId(userId);
+        WwqShareCount shareCount = wwqShareCountMapper.selectOne(shareCount1);
+        map.put("id",user.getId());
+        map.put("nickname",user.getNickname());
+        map.put("headimgurl",user.getHeadimgurl());
+        map.put("wxCode",user.getWxCode());
+        map.put("phone",user.getPhone());
+        map.put("userLevel",shareCount.getUserLevel());
+        return  map;
     }
 }

@@ -208,11 +208,12 @@ public class WwqUserController {
         if(!smsRedisCode.equals(code)){
             return JSONResult.init(501, "短信验证码错误！");
         }
-        String userId = authorHelper.getUserId(req);
-        if(userId == null){
-            return JSONResult.init(301, "用户未授权!");
-        }
-        //保存手机号到数据库
+        String userId = "1";
+//        String userId = authorHelper.getUserId(req);
+//        if(userId == null){
+//            return JSONResult.init(301, "用户未授权!");
+//        }
+        //保存手机号到数据库以及微信永久二维码
         boolean b = wwqUserService.updateUserPhone(phone, userId);
         if(b){
             //获取用户信息
@@ -258,15 +259,18 @@ public class WwqUserController {
     @RequestMapping(value="/userInfo",produces="text/html;charset=UTF-8")
     @ResponseBody
     public String userInfo(HttpServletRequest req){
-        String userId = authorHelper.getUserId(req);
-        if(userId == null){
-            return JSONResult.init(301, "用户未登录!");
-        }
-        WwqUser user = wwqUserService.selectUserInfo(userId);
+        String userId = "1";
+//        String userId = authorHelper.getUserId(req);
+//        if(userId == null){
+//            return JSONResult.init(301, "用户未登录!");
+//        }
+        Map<String,Object> user = wwqUserService.selectUserInfo1(userId);
         if(user == null){
             return JSONResult.init(301, "用户未登录！");
         }
         return JSONResult.init(200, "success",user);
     }
+
+
 }
 

@@ -14,7 +14,7 @@ import java.io.Serializable;
  * </p>
  *
  * @author generator-plus123
- * @since 2018-12-29
+ * @since 2019-01-11
  */
 @TableName("wwq_pay")
 public class WwqPay extends Model<WwqPay> {
@@ -71,12 +71,18 @@ public class WwqPay extends Model<WwqPay> {
     /**
      * 是否删除
      */
+    @TableField("delete_flag")
     private Integer deleteFlag;
     /**
      * 用户id
      */
     @TableField("user_id")
     private String userId;
+    /**
+     * 本单可获得的积分
+     */
+    @TableField("consume_point")
+    private Integer consumePoint;
 
 
     public String getId() {
@@ -183,6 +189,14 @@ public class WwqPay extends Model<WwqPay> {
         this.userId = userId;
     }
 
+    public Integer getConsumePoint() {
+        return consumePoint;
+    }
+
+    public void setConsumePoint(Integer consumePoint) {
+        this.consumePoint = consumePoint;
+    }
+
     public static final String ID = "id";
 
     public static final String PRODUCT_TYPE_ID = "product_type_id";
@@ -205,9 +219,11 @@ public class WwqPay extends Model<WwqPay> {
 
     public static final String UPDATE_USER = "update_user";
 
-    public static final String DELETEFLAG = "deleteFlag";
+    public static final String DELETE_FLAG = "delete_flag";
 
     public static final String USER_ID = "user_id";
+
+    public static final String CONSUME_POINT = "consume_point";
 
     @Override
     protected Serializable pkVal() {
@@ -230,6 +246,7 @@ public class WwqPay extends Model<WwqPay> {
         ", updateUser=" + updateUser +
         ", deleteFlag=" + deleteFlag +
         ", userId=" + userId +
+        ", consumePoint=" + consumePoint +
         "}";
     }
 }

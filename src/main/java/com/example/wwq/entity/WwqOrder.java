@@ -69,11 +69,6 @@ public class WwqOrder extends Model<WwqOrder> {
     @TableField("post_date_id")
     private String postDateId;
     /**
-     * 消耗积分
-     */
-    @TableField("consume_point")
-    private Integer consumePoint;
-    /**
      * 买家留言
      */
     private String message;
@@ -206,14 +201,6 @@ public class WwqOrder extends Model<WwqOrder> {
 
     public void setPostDateId(String postDateId) {
         this.postDateId = postDateId;
-    }
-
-    public Integer getConsumePoint() {
-        return consumePoint;
-    }
-
-    public void setConsumePoint(Integer consumePoint) {
-        this.consumePoint = consumePoint;
     }
 
     public String getMessage() {
@@ -366,7 +353,6 @@ public class WwqOrder extends Model<WwqOrder> {
         ", orderRealPrice=" + orderRealPrice +
         ", postWayType=" + postWayType +
         ", postDateId=" + postDateId +
-        ", consumePoint=" + consumePoint +
         ", message=" + message +
         ", orderStatus=" + orderStatus +
         ", payStatus=" + payStatus +

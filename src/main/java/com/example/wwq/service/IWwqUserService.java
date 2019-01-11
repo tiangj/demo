@@ -23,4 +23,6 @@ public interface IWwqUserService extends IService<WwqUser> {
     boolean updateUserPhone(String phone,String userId);
 
     WwqUser selectUserInfo(String userId);
+
+    Map<String,Object> selectUserInfo1(String userId);
 }

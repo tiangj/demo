@@ -50,6 +50,12 @@ public class WwqUser extends Model<WwqUser> {
      * 语言
      */
     private String language;
+
+    /**
+     * 用户永久的带参二维码
+     */
+    private String wxCode;
+
     /**
      * 城市
      */
@@ -218,6 +224,14 @@ public class WwqUser extends Model<WwqUser> {
 
     public void setDeleteFlag(Integer deleteFlag) {
         this.deleteFlag = deleteFlag;
+    }
+
+    public String getWxCode() {
+        return wxCode;
+    }
+
+    public void setWxCode(String wxCode) {
+        this.wxCode = wxCode;
     }
 
     public static final String ID = "id";

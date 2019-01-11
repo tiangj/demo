@@ -27,4 +27,9 @@ public interface IWwqOrderService extends IService<WwqOrder> {
 //    Map<String,Object> getStatusNumBystatus(String userId);
 //
 //    List<Map<String,Object>> shopProductOrderDetail(String userId,String orderId,Integer orderStatus);
+
+
+    List<Map<String, Object>> addShopProductCartOrder(String userId,String ids,Integer postWayType,String postDateId,Integer payWay,String remark,String addressId);
+
+    List<Map<String, Object>> addShopProductOrder(String userId,String id,Integer buyNum,Integer postWayType,String postDateId,Integer payWay,String remark,String addressId);
 }

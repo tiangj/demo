@@ -10,6 +10,7 @@
         <result column="phone" property="phone" />
         <result column="headimgurl" property="headimgurl" />
         <result column="sex" property="sex" />
+        <result column="wx_code" property="wxCode" />
         <result column="language" property="language" />
         <result column="city" property="city" />
         <result column="province" property="province" />
@@ -24,7 +25,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, open_id AS openId, nickname, phone, headimgurl, sex, language, city, province, country, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, deleteFlag
+        id, open_id AS openId, nickname, phone, headimgurl, sex,wxCode, language, city, province, country, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, deleteFlag
     </sql>
 
 

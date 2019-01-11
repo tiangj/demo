@@ -22,4 +22,8 @@
         id, user_id AS userId, integral_detail AS integralDetail, way_type AS wayType, product_id AS productId, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, delete_flag AS deleteFlag
     </sql>
 
-</mapper>
+
+    <select id="getUserIntegralList" parameterType="java.lang.String" resultType="com.example.wwq.entity.WwqIntegral">
+        select * from wwq_integral where user_id = #{userId} and delete_flag = 0
+    </select>
+ </mapper>

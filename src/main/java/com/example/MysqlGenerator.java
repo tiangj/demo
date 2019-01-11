@@ -71,7 +71,7 @@ public class MysqlGenerator {
                         // .setDbColumnUnderline(true)//全局下划线命名
                         //.setTablePrefix(new String[]{"sys_"})// 此处可以修改为您的表前缀
                         .setNaming(NamingStrategy.underline_to_camel)// 表名生成策略
-                        .setInclude(new String[] { "wwq_product","wwq_product_comment","wwq_product_detail","wwq_product_file"}) // 需要生成的表
+                        .setInclude(new String[] {"wwq_share_count"}) // 需要生成的表
                         // .setExclude(new String[]{"test"}) // 排除生成的表
                         // 自定义实体父类
                         // .setSuperEntityClass("com.baomidou.demo.TestEntity")
@@ -102,7 +102,7 @@ public class MysqlGenerator {
                 // 包配置
                 new PackageConfig()
                         //.setModuleName("test")
-                        .setParent("com.example.product")// 自定义包路径
+                        .setParent("com.example.wwq")// 自定义包路径
                         .setController("controller")// 这里是控制器包名，默认 web
         )/*.setCfg(
                 // 注入自定义配置，可以在 VM 中使用 cfg.abc 设置的值

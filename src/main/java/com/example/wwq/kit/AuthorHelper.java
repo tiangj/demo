@@ -2,10 +2,12 @@ package com.example.wwq.kit;
 
 import com.example.wwq.entity.WwqUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
+
+@Service
 public class AuthorHelper {
     @Autowired
     private RedisHelper manager;
@@ -60,7 +62,7 @@ public class AuthorHelper {
      * @return
      */
     public boolean setCaptcha(String code,String codeKey){
-        Boolean b = manager.set(codeKey, code,600L);
+        Boolean b = manager.set(codeKey, code,60000L);
         return b;
 
     }

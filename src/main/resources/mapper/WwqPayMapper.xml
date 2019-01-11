@@ -15,13 +15,14 @@
         <result column="create_user" property="createUser" />
         <result column="update_date" property="updateDate" />
         <result column="update_user" property="updateUser" />
-        <result column="deleteFlag" property="deleteFlag" />
+        <result column="delete_flag" property="deleteFlag" />
         <result column="user_id" property="userId" />
+        <result column="consume_point" property="consumePoint" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, product_type_id AS productTypeId, product_id AS productId, pay_name AS payName, total_price AS totalPrice, pay_status AS payStatus, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, deleteFlag, user_id AS userId
+        id, product_type_id AS productTypeId, product_id AS productId, pay_name AS payName, total_price AS totalPrice, pay_status AS payStatus, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, delete_flag AS deleteFlag, user_id AS userId, consume_point AS consumePoint
     </sql>
 
 </mapper>

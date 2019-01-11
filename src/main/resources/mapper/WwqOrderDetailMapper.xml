@@ -20,4 +20,9 @@
         id, order_id AS orderId, order_status AS orderStatus, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, deleteFlag
     </sql>
 
+
+    <select id="getPayOrderList" resultType="com.example.wwq.entity.WwqPayDetail" parameterType="java.lang.String">
+        SELECT order_id FROM shop_pay_detail WHERE pay_id = #{payId} and deleteFlag = 0
+    </select>
+
 </mapper>

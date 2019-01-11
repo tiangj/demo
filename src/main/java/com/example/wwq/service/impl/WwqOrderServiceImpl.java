@@ -1,10 +1,21 @@
 package com.example.wwq.service.impl;
 
+import com.example.wwq.entity.WwqCart;
 import com.example.wwq.entity.WwqOrder;
+import com.example.wwq.entity.WwqOrderDetail;
+import com.example.wwq.entity.WwqProduct;
+import com.example.wwq.mapper.WwqCartMapper;
+import com.example.wwq.mapper.WwqOrderDetailMapper;
 import com.example.wwq.mapper.WwqOrderMapper;
+import com.example.wwq.mapper.WwqProductMapper;
 import com.example.wwq.service.IWwqOrderService;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * <p>
@@ -16,6 +27,19 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class WwqOrderServiceImpl extends ServiceImpl<WwqOrderMapper, WwqOrder> implements IWwqOrderService {
+
+    @Autowired
+    private WwqCartMapper wwqCartMapper;
+
+
+    @Autowired
+    private WwqProductMapper wwqProductMapper;
+
+    @Autowired
+    private WwqOrderMapper wwqOrderMapper;
+
+    @Autowired
+    private WwqOrderDetailMapper wwqOrderDetailMapper;
 //
 //    @Autowired
 //    private WwqOrderMapper wwqOrderMapper;
@@ -180,4 +204,143 @@ public class WwqOrderServiceImpl extends ServiceImpl<WwqOrderMapper, WwqOrder> i
 //        retMap.put("status600", status600);
 //        return retMap;
 //    }
+
+
+    @Transactional
+    @Override
+    public List<Map<String, Object>> addShopProductCartOrder(String userId, String ids, Integer postWayType, String postDateId, Integer payWay, String remark, String addressId) {
+        List<Map<String, Object>> shopOrderList = null;
+        String[] shopCartIds = ids.split(",");
+        for(int i = 0 ; i < shopCartIds.length ; i ++){
+            //查询购物车信息
+            WwqCart shopCart = wwqCartMapper.selectById(shopCartIds[i]);
+            if(shopCart == null){
+                return null;
+            }
+            //查询商品信息
+            WwqProduct wwqProduct = wwqProductMapper.selectById(shopCart.getProductId());
+            if(wwqProduct == null){
+                return null;
+            }
+            //验证商品总价是否跟购物车中的价格相同
+            BigDecimal totalPrice = wwqProduct.getProductNowPrice().multiply(new BigDecimal(shopCart.getBuyNum()));
+            if(totalPrice.compareTo(shopCart.getTotalPrice()) != 0){
+                return null;
+            }
+            //计算积分
+//            BigDecimal consumePoint = new BigDecimal(0);
+//            if(totalPrice.compareTo(new BigDecimal(500)) >= 0){
+//                consumePoint = new BigDecimal(500).multiply(totalPrice.divide(new BigDecimal(500)).setScale(0,java.math.BigDecimal.ROUND_DOWN)).multiply(new BigDecimal(1.8));
+//            }
+            //添加订单
+            WwqOrder shopOrder = new WwqOrder();
+            shopOrder.setOrderNum(shopCart.getBuyNum());
+            shopOrder.setOrderTotalPrice(totalPrice);
+            shopOrder.setOrderStatus(100);
+            shopOrder.setPayStatus(100);
+            shopOrder.setProductId(shopCart.getProductId());
+            shopOrder.setProductTypeId(shopCart.getProductTypeId());
+            shopOrder.setUserId(userId);
+            shopOrder.setCreateDate(new Date());
+            shopOrder.setCreateUser(userId);
+            shopOrder.setUpdateDate(new Date());
+            shopOrder.setUpdateUser(userId);
+            shopOrder.setPayWay(payWay);
+            shopOrder.setPostDateId(postDateId);
+            shopOrder.setPostWayType(postWayType);
+            shopOrder.setMessage(remark);
+            if(postWayType == 1){
+                shopOrder.setAddressId(addressId);
+            }
+            int ret = wwqOrderMapper.insert(shopOrder);
+            if(ret < 1){
+                new Exception();
+                return null;
+            }
+            //新建商品轨迹记录
+            WwqOrderDetail shopOrderDetail = new WwqOrderDetail();
+            shopOrderDetail.setOrderId(shopOrder.getId());
+            shopOrderDetail.setOrderStatus(100);
+            shopOrderDetail.setCreateDate(new Date());
+            shopOrderDetail.setCreateUser(userId);
+            shopOrderDetail.setUpdateDate(new Date());
+            shopOrderDetail.setUpdateUser(userId);
+            int ret1 = wwqOrderDetailMapper.insert(shopOrderDetail);
+            if(ret1 > 0){
+                WwqCart record = new WwqCart();
+                record.setId(shopCartIds[i]);
+                record.setDeleteFlag(1);
+                wwqCartMapper.updateById(record);
+            }else{
+                new Exception();
+                return null;
+            }
+            Map<String, Object> preOrder = null;
+            preOrder.put("orderId", shopOrder.getId());
+            preOrder.put("product_id", shopOrder.getProductId());
+            preOrder.put("orderPrice", shopOrder.getOrderTotalPrice());
+            shopOrderList.add(preOrder);
+
+        }
+        return shopOrderList;
+    }
+
+    @Override
+    public List<Map<String, Object>> addShopProductOrder(String userId, String id,Integer buyNum,Integer postWayType,String postDateId,Integer payWay,String remark,String addressId) {
+        List<Map<String, Object>> shopOrderList = new ArrayList<>();
+        //查询商品信息
+        WwqProduct wwqProduct = wwqProductMapper.selectById(id);
+        if(wwqProduct == null){
+            return null;
+        }
+        //验证商品规格信息
+//        ShopProductType shopProductType = shopProductTypeMapper.selectByPrimaryKey(productTypeId);
+//        if(shopProductType == null){
+//            return null;
+//        }
+        //计算总价
+        BigDecimal totalPrice = wwqProduct.getProductNowPrice().multiply(new BigDecimal(buyNum));
+//		订单总价加上运费
+//		totalPrice = totalPrice.add(new BigDecimal(shopProductList.get(0).get("post_price").toString()));
+        //新建订单
+        WwqOrder shopOrder = new WwqOrder();
+        shopOrder.setOrderNum(buyNum);
+        shopOrder.setOrderTotalPrice(totalPrice);
+        shopOrder.setOrderStatus(100);
+        shopOrder.setPayStatus(100);
+        shopOrder.setProductId(id);
+        shopOrder.setUserId(userId);
+        shopOrder.setCreateDate(new Date());
+        shopOrder.setCreateUser(userId);
+        shopOrder.setUpdateDate(new Date());
+        shopOrder.setUpdateUser(userId);
+        shopOrder.setPayWay(payWay);
+        shopOrder.setPostDateId(postDateId);
+        shopOrder.setPostWayType(postWayType);
+        shopOrder.setMessage(remark);
+        if(postWayType == 1){
+            shopOrder.setAddressId(addressId);
+        }
+        int ret = wwqOrderMapper.insert(shopOrder);
+        if(ret < 1){
+            return null;
+        }
+        //新建商品轨迹记录
+        WwqOrderDetail shopOrderDetail = new WwqOrderDetail();
+        shopOrderDetail.setOrderId(shopOrder.getId());
+        shopOrderDetail.setOrderStatus(100);
+        shopOrderDetail.setCreateDate(new Date());
+        shopOrderDetail.setCreateUser(userId);
+        shopOrderDetail.setUpdateDate(new Date());
+        shopOrderDetail.setUpdateUser(userId);
+        wwqOrderDetailMapper.insert(shopOrderDetail);
+        Map<String, Object> preOrder = new HashMap<>();
+        preOrder.put("orderId", shopOrder.getId());
+        preOrder.put("product_id", shopOrder.getProductId());
+        preOrder.put("orderPrice", shopOrder.getOrderTotalPrice());
+        shopOrderList.add(preOrder);
+        return shopOrderList;
+    }
+
+
 }
