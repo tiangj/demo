@@ -41,7 +41,7 @@
 				LEFT JOIN wwq_user AS su ON su.id = sa.user_id
 				WHERE sa.user_id = #{userId}
 				AND sa.delete_flag = 0
-				AND su.deleteFlag = 0
+				AND su.delete_flag = 0
     </select>
 
 
