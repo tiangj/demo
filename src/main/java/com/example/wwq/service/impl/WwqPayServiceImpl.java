@@ -304,7 +304,7 @@ public class WwqPayServiceImpl extends ServiceImpl<WwqPayMapper, WwqPay> impleme
         int fee1 = fee.intValue();
         String appid = IWxPayConfig.WX_WXPUBLIC_APPID;
         String mch_id = IWxPayConfig.WX_WXPUBLIC_MATCH_ID;
-        String nonce_str = WechatPayUtil.getNonceStr();
+        String nonce_str = this.getNonceStr();
         String notify_url = IWxPayConfig.WX_WXPUBLIC_NOTITY_URL;
         String trade_type = IWxPayConfig.WX_WXPUBLIC_TRADE_TYPE;
         SortedMap<String, Object> packageParams = new TreeMap<String, Object>();
@@ -345,5 +345,13 @@ public class WwqPayServiceImpl extends ServiceImpl<WwqPayMapper, WwqPay> impleme
         payPackage.put("paySign", finalsign);
         payPackage.put("paymentId", orderId);
         return payPackage;
+    }
+
+
+
+    public static String getNonceStr()
+    {
+        String str = String.valueOf(new Random().nextLong());
+        return str.substring(str.length() - 10);
     }
 }
