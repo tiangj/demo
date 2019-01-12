@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -129,6 +130,29 @@ public class WwqOrderController {
 //        }
         List<Map<String,Object>> shopProduct = wwqOrderService.shopProductOrderDetail(userId,orderId,orderStatus);
         return JSONResult.init(200, "success",shopProduct);
+    }
+
+    /****
+     * 更新订单状态
+     * @param req
+     * @param orderId:订单id
+     * @param orderStatus:确认收货:300,评价:400
+     * @return
+     */
+    @RequestMapping(value="/updateOrderStatus",produces="text/html;charset=UTF-8")
+    @ResponseBody
+    public String updateOrderStatus(HttpServletRequest req,@RequestParam(value="orderId",required=true)String orderId,
+                                    @RequestParam(value="orderStatus",required=true)Integer orderStatus){
+        Map<String,Object> result=new HashMap<>();
+        try {
+            result=wwqOrderService.updateOrderStatus(orderId,orderStatus);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("code",0);
+            result.put("msg","修改失败");
+            return JSONResult.init(500, "fail",null);
+        }
+        return JSONResult.init(200, "success",result);
     }
 }
 
