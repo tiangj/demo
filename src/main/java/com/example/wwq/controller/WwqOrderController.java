@@ -146,6 +146,9 @@ public class WwqOrderController {
         Map<String,Object> result=new HashMap<>();
         try {
             result=wwqOrderService.updateOrderStatus(orderId,orderStatus);
+            if("0".equals(result.get("code").toString())){
+                return JSONResult.init(500, "fail",result);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             result.put("code",0);
