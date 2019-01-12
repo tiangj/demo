@@ -23,13 +23,13 @@
 
     <select id="getScoreMallProductList" resultType="java.util.Map">
          select s.id,
-              p.id as productId;
+              p.id as productId,
                p.`product_name`,
                s.`remain_num`,
                s.`exchange_scroe`,
                f.`file_path`
           from wwq_score_mall as s
-          LEFT JOIN `wwq_product` as p on p.`id`= s.`product_id` AND p.`deleteFlag`= 0
+          LEFT JOIN `wwq_product` as p on p.`id`= s.`product_id` AND p.`delete_flag`= 0
           LEFT JOIN `wwq_product_file` as f on p.`id`= f.`product_id` and f.`deleteFlag` =0
          where s.delete_flag= 0
     </select>
