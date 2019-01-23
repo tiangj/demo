@@ -53,6 +53,7 @@ public class WwqOrderDetail extends Model<WwqOrderDetail> {
     /**
      * 是否删除
      */
+    @TableField("deleteFlag")
     private Integer deleteFlag;
 
 

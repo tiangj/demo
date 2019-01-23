@@ -1,5 +1,6 @@
 package com.example.wwq.service.impl;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.example.wwq.entity.*;
 import com.example.wwq.mapper.*;
 import com.example.wwq.service.IWwqOrderService;
@@ -356,6 +357,33 @@ public class WwqOrderServiceImpl extends ServiceImpl<WwqOrderMapper, WwqOrder> i
         preOrder.put("orderPrice", shopOrder.getOrderTotalPrice());
         shopOrderList.add(preOrder);
         return shopOrderList;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Map<String, Object> updateOrderStatus(String orderId,Integer orderStatus) throws Exception {
+        Integer flag=0;
+        WwqOrder wwqOrder=new WwqOrder();
+        wwqOrder.setId(orderId);
+        wwqOrder.setOrderStatus(orderStatus);
+        flag=wwqOrderMapper.updateById(wwqOrder);
+        EntityWrapper<WwqOrderDetail> entityWrapper=new EntityWrapper<>();
+        entityWrapper.eq("order_id",orderId);
+        List<WwqOrderDetail> orderDetailList=wwqOrderDetailMapper.selectList(entityWrapper);
+
+        for (WwqOrderDetail wwqOrderDetail:orderDetailList){
+            wwqOrderDetail.setOrderStatus(orderStatus);
+            flag=wwqOrderDetailMapper.updateById(wwqOrderDetail);
+        }
+        Map<String,Object> result=new HashMap<>();
+        if(flag>0){
+            result.put("code",1);
+            result.put("msg","操作成功");
+        }else {
+            result.put("code",0);
+            result.put("msg","操作失败");
+        }
+        return  result;
     }
 
     /**

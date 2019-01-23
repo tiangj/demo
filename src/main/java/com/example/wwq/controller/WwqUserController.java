@@ -63,10 +63,10 @@ public class WwqUserController {
              * 1、获取返回的回调地址
              * 2、http://636.hnguwei.com是当前的外网地址
              * */
-            String reutrnURl = "http://test.zhongbohn.com/demo/wwqUser/wxCallBack";
+            String returnURl = "http://test.zhongbohn.com/demo/wwqUser/wxCallBack";
             //第一步：用户同意授权，获取code
             String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + WeCahtUtils.APPID
-                    + "&redirect_uri=" + URLEncoder.encode(reutrnURl)
+                    + "&redirect_uri=" + URLEncoder.encode(returnURl)
                     + "&response_type=code"
                     + "&scope=snsapi_userinfo"
                     + "&state=STATE#wechat_redirect";

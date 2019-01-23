@@ -34,4 +34,7 @@ public interface IWwqOrderService extends IService<WwqOrder> {
     List<Map<String, Object>> addShopProductOrder(String userId,String id,Integer buyNum,Integer postWayType,String postDateId,Integer payWay,String remark,String addressId);
 
     Map<String,Object> selectPostDateAndWay(String userId,String productId);
+
+    Map<String,Object> updateOrderStatus(String orderId,Integer orderStatus) throws Exception;
+
 }
