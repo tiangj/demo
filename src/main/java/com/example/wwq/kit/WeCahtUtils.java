@@ -15,8 +15,8 @@ import org.apache.http.util.EntityUtils;
 
 public class WeCahtUtils {
 	//鏀惧叆褰撳墠鍏紬鍙风殑appid鍜宎ppsecret
-	public static final String APPID="wx8e3daee88d3ae949";
-	public static  final String APPSECRET="13bece86e49d3052d21a4fbb5bccd63d";
+	public static final String APPID="wx4dc254fa5905cd27";
+	public static  final String APPSECRET="95d214a1825edbf4ccb9da63846dc9a3";
     //url 鎺ュ彛鍦板潃
 
 	public  static JSONObject  getJSONObject(String url) throws ClientProtocolException, IOException{

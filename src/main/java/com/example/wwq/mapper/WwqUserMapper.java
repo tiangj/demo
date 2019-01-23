@@ -17,4 +17,7 @@ import java.util.Map;
 public interface WwqUserMapper extends BaseMapper<WwqUser> {
 
     List<Map<String,Object>> getShopUserInfo(Map<String,Object> map);
+
+
+    List<Map<String,Object>> selectInfoById(Map<String,Object> map);
 }

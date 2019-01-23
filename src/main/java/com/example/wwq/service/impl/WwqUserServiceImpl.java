@@ -8,6 +8,7 @@ import com.example.wwq.service.IWwqUserService;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.example.wwq.wx.Util.WechatKit;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -80,11 +81,11 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
         //先根据openId判断shopUser是否存在
         Map<String, Object> example = new HashMap<>();
         example.put("openid", userInfo.getString("openid"));
-        List<Map<String, Object>> userList = wwqUserMapper.getShopUserInfo(example);
+        List<Map<String, Object>> userList = wwqUserMapper.selectInfoById(example);
         if(userList == null || userList.size() < 1){
             //做插入操作
             wwqUserMapper.insert(shopUser);
-            List<Map<String, Object>> userList1 = wwqUserMapper.getShopUserInfo(example);
+            List<Map<String, Object>> userList1 = wwqUserMapper.selectInfoById(example);
             map.put("userList1", userList1);
             map.put("code", 200);
             return map;
@@ -92,11 +93,16 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
             shopUser.setId(userList.get(0).get("id").toString());
             wwqUserMapper.updateById(shopUser);
             //返回用户信息
-            String phone = userList.get(0).get("phone").toString();
-            if(!phone.isEmpty()){
-                map.put("code", 200);
-                map.put("userList1", userList);
-            }else{
+            //String phone = userList.get(0).get("phone").toString();
+            try {
+                if (StringUtils.isBlank(userList.get(0).get("phone").toString())) {
+                    map.put("code", 200);
+                    map.put("userList1", userList);
+                } else {
+                    map.put("code", 300);
+                    map.put("userList1", userList);
+                }
+            }catch (Exception e){
                 map.put("code", 300);
                 map.put("userList1", userList);
             }
@@ -115,18 +121,24 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
             String wxCode = WechatKit.productWxCodeUtil(userId,filePath);
             shopUser.setWxCode(wxCode);
             wwqUserMapper.updateById(shopUser);
-            WwqShareCount wwqShareCount = new WwqShareCount();
-            wwqShareCount.setUserId(userId);
-            wwqShareCount.setCreateDate(new Date());
-            wwqShareCount.setCreateUser(userId);
-            wwqShareCount.setDeleteFlag(0);
-            wwqShareCount.setUserId(userId);
-            wwqShareCount.setFirstShareNum(0);
-            wwqShareCount.setSecondShareNum(0);
-            wwqShareCount.setUserLevel(1);
-            wwqShareCount.setUpdateDate(new Date());
-            wwqShareCount.setUpdateUser(userId);
-            wwqShareCountMapper.insert(wwqShareCount);
+            //判断是否有分销记录
+            WwqShareCount wwqShareCount1 = new WwqShareCount();
+            wwqShareCount1.setUserId(userId);
+            WwqShareCount wwqShareCount2 = wwqShareCountMapper.selectOne(wwqShareCount1);
+            if(wwqShareCount2 == null){
+                WwqShareCount wwqShareCount = new WwqShareCount();
+                wwqShareCount.setUserId(userId);
+                wwqShareCount.setCreateDate(new Date());
+                wwqShareCount.setCreateUser(userId);
+                wwqShareCount.setDeleteFlag(0);
+                wwqShareCount.setUserId(userId);
+                wwqShareCount.setFirstShareNum(0);
+                wwqShareCount.setSecondShareNum(0);
+                wwqShareCount.setUserLevel(1);
+                wwqShareCount.setUpdateDate(new Date());
+                wwqShareCount.setUpdateUser(userId);
+                wwqShareCountMapper.insert(wwqShareCount);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -136,8 +148,10 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
 
 
     @Override
-    public WwqUser selectUserInfo(String userId) {
-        WwqUser user = wwqUserMapper.selectById(userId);
+    public  List<Map<String,Object>> selectUserInfo(String userId) {
+        Map<String,Object> map = new HashMap<>();
+        map.put("openid",userId);
+        List<Map<String,Object>> user = wwqUserMapper.selectInfoById(map);
         return  user;
     }
 
@@ -150,12 +164,21 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
         WwqShareCount shareCount1 = new WwqShareCount();
         shareCount1.setUserId(userId);
         WwqShareCount shareCount = wwqShareCountMapper.selectOne(shareCount1);
+        System.out.println("shareCount:"+shareCount);
         map.put("id",user.getId());
         map.put("nickname",user.getNickname());
         map.put("headimgurl",user.getHeadimgurl());
         map.put("wxCode",user.getWxCode());
         map.put("phone",user.getPhone());
-        map.put("userLevel",shareCount.getUserLevel());
+        if(shareCount == null){
+            map.put("userLevel", "");
+        }else {
+            if (shareCount.getUserLevel() != null) {
+                map.put("userLevel", shareCount.getUserLevel());
+            } else {
+                map.put("userLevel", "");
+            }
+        }
         return  map;
     }
 }

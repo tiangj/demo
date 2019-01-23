@@ -358,5 +358,21 @@ public class WwqOrderServiceImpl extends ServiceImpl<WwqOrderMapper, WwqOrder> i
         return shopOrderList;
     }
 
+    /**
+     * 查询配送时间和配送方式
+     */
+    @Override
+    public Map<String, Object> selectPostDateAndWay(String userId,String productId) {
+        Map<String, Object> retMap = new HashMap<>();
+        List<Map<String, Object>> selectPostDate =  wwqOrderMapper.selectPostDate(productId);
+        Map<String, Object> example2 = new HashMap<>();
+        example2.put("productId", productId);
+        List<Map<String, Object>> selectPostWay =  wwqOrderMapper.selectPostWay(productId);
+        WwqAddress address = wwqOrderMapper.selectDefaultAddress(userId);
+        retMap.put("selectPostDate", selectPostDate);
+        retMap.put("selectPostWay", selectPostWay);
+        retMap.put("selectDefaultAddress", address);
+        return retMap;
+    }
 
 }

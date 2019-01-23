@@ -41,11 +41,10 @@ public class WwqIntegralController {
     @RequestMapping("/userIntegral")
     @ResponseBody
     public String getUserIntegralList(HttpServletRequest req){
-        String userId = "1";
-//        String userId = authorHelper.getUserId(req);
-//        if(userId == null){
-//            return JSONResult.init(301, "success", "user not login");
-//        }
+        String userId = authorHelper.getUserId(req);
+        if(userId == null){
+            return JSONResult.init(301, "success", "user not login");
+        }
         List<WwqIntegral> wwqIntegral = wwqIntegralService.getUserIntegralList(userId);
         if(wwqIntegral == null){
             return JSONResult.init(500, "fail");

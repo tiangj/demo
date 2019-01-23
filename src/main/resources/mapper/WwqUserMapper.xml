@@ -30,6 +30,11 @@
 
 
     <select id="getShopUserInfo" parameterType="java.lang.String" resultType="java.util.Map">
-        SELECT * FROM mks_user WHERE open_id = #{openid} and delete_flag = 0
+        SELECT id, open_id AS openId, nickname, ifnull(phone,"") as phone, headimgurl, sex,wxCode, language, city, province, country, remark FROM wwq_user WHERE id = #{userId} and delete_flag = 0
     </select>
+
+    <select id="selectInfoById" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT * FROM wwq_user WHERE open_id = #{openid} and delete_flag = 0
+    </select>
+
 </mapper>

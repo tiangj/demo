@@ -2,6 +2,7 @@ package com.example.wwq.pay.kit;
 
 
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import net.sf.json.xml.XMLSerializer;
 import net.sf.json.JSONObject;
 import java.io.*;
@@ -34,6 +35,7 @@ public class GetWxOrderno {
         String prepay_id = null;
         XMLSerializer xmlSerializer = new XMLSerializer();
         JSONObject json = (JSONObject)xmlSerializer.read(sb.toString());
+        System.out.println("json:"+json);
         String return_code = json.getString("return_code");
         String return_msg = new String(json.getString("return_msg").getBytes("ISO-8859-1"),"UTF-8");
         System.out.println("return_msg:"+return_msg);

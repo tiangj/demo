@@ -132,4 +132,17 @@
         order by so.create_date desc
     </select>
 
+
+    <select id="selectPostDate" parameterType="java.lang.String" resultType="java.util.Map">
+          SELECT wpw.`id` ,wpw.`post_way_name`  FROM `wwq_post_way` as wpw LEFT JOIN `wwq_product_detail` as wpd on wpd.`post_way_id` = wpw.`id` and wpd.`deleteFlag` = 0 WHERE wpd.`shop_product_id` =#{productId} and wpw.`delete_flag`  = 0
+    </select>
+
+
+    <select id="selectPostWay" parameterType="java.lang.String" resultType="java.util.Map">
+          SELECT wpw.`id` ,wpw.`post_way_date`  FROM `wwq_post_date` as wpw LEFT JOIN `wwq_product_detail` as wpd on wpd.`post_date_id` = wpw.`id` and wpd.`deleteFlag` = 0 WHERE wpd.`shop_product_id` =#{productId} and wpw.`delete_flag`  = 0
+    </select>
+
+    <select id="selectDefaultAddress" resultType="java.lang.String" parameterType="java.util.Map">
+        select * from wwq_address as sa WHERE sa.default_address = 1 and sa.delete_flag = 0 AND sa.user_id = #{userId}
+    </select>
 </mapper>

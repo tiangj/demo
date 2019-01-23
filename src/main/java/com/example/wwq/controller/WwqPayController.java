@@ -1,6 +1,7 @@
 package com.example.wwq.controller;
 
 
+import com.example.wwq.kit.AuthorHelper;
 import com.example.wwq.kit.JSONResult;
 import com.example.wwq.service.IWwqOrderService;
 import com.example.wwq.service.IWwqPayService;
@@ -41,6 +42,9 @@ public class WwqPayController {
     @Autowired
     private IWwqPayService wwqPayService;
 
+    @Autowired
+    private AuthorHelper authorHelper;
+
     /**
      * 订单支付接口
      * @param req
@@ -57,7 +61,9 @@ public class WwqPayController {
      */
     @RequestMapping("/pay")
     @ResponseBody
-    public String pay(HttpServletRequest req, @RequestParam(value="orderType",required=true)Integer orderType, @RequestParam(value="shopCartIds",required=true)String ids,
+    public String pay(HttpServletRequest req,
+                      @RequestParam(value="orderType",required=true)Integer orderType,
+                      @RequestParam(value="shopCartIds",required=true)String ids,
                       @RequestParam(value="postWayType",required=true)Integer postWayType,
                       @RequestParam(value="postDateId",required=true)String postDateId,
                       @RequestParam(value="addressId",required=false)String addressId,
@@ -65,12 +71,11 @@ public class WwqPayController {
                       @RequestParam(value="buyNum",required=true)Integer buyNum,
                       @RequestParam(value="payWay",required=true)Integer payWay,
                       @RequestParam(value="remark",required=true)String remark){
-        String renoteAddr = "127.0.0.1";
-        String userId = "1";
-//        String userId = authorHelper.getUserId(req);
-//        if(userId == null){
-//            return JSONResult.init(301, "success", "user not login");
-//        }
+        String renoteAddr = req.getRemoteAddr();
+        String userId = authorHelper.getUserId(req);
+        if(userId == null){
+            return JSONResult.init(301, "success", "user not login");
+        }
         List<Map<String, Object>> retList = null;
         //先生成商品订单
         if(orderType == 1){

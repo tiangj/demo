@@ -1,5 +1,6 @@
 package com.example.wwq.mapper;
 
+import com.example.wwq.entity.WwqAddress;
 import com.example.wwq.entity.WwqOrder;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 
@@ -25,4 +26,12 @@ public interface WwqOrderMapper extends BaseMapper<WwqOrder> {
     List<Map<String,Object>> shopPayInfo(Map<String,Object> map);
 
     List<Map<String,Object>> shopProductOrderListById(Map<String,Object> map);
+
+    List<Map<String,Object>> selectPostDate(String productId);
+
+    List<Map<String,Object>> selectPostWay(String productId);
+
+    WwqAddress selectDefaultAddress(String userId);
 }
+
+

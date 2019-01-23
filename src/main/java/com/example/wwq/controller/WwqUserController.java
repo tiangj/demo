@@ -63,7 +63,7 @@ public class WwqUserController {
              * 1、获取返回的回调地址
              * 2、http://636.hnguwei.com是当前的外网地址
              * */
-            String reutrnURl = "http://www.yzvpf1314.com:8080/demo/wwqUser/wxCallBack.do";
+            String reutrnURl = "http://test.zhongbohn.com/demo/wwqUser/wxCallBack";
             //第一步：用户同意授权，获取code
             String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + WeCahtUtils.APPID
                     + "&redirect_uri=" + URLEncoder.encode(reutrnURl)
@@ -84,9 +84,9 @@ public class WwqUserController {
         @ResponseBody
         public void callBack(HttpServletResponse resp,String code) throws ClientProtocolException,
                 IOException {
-            System.out.println("code-----------------:"+code);
             String access_token;
             String openid;
+            System.out.println("code:"+code);
             boolean b = wxLoginHelper.getCode(code);
             if(b){
                 String userInfo = wxLoginHelper.getUserInfo(code).toString();
@@ -112,19 +112,19 @@ public class WwqUserController {
             System.out.println("retMap =====" +userInfo);
             //控制页面跳转
             if (retMap == null || retMap.size() < 1) {
-                resp.sendRedirect("http://hn.zhongbohn.com/user");
+                resp.sendRedirect("http://test1.zhongbohn.com/login");
             } else {
                 if(Integer.parseInt(retMap.get("code").toString()) == 200){
                     List<Map<String, Object>> userList = (List<Map<String, Object>>) retMap.get("userList1");
-                    String userToken = (String) userList.get(0).get("id");
-                    resp.sendRedirect("http://www.yzvpf1314.com:8080/user?token="+userToken);
+                    String userToken = authorHelper.setSession(userList.get(0));
+                    resp.sendRedirect("http://test1.zhongbohn.com/?token="+userToken);
                 }else{
                     // 得到用户id
                     @SuppressWarnings("unchecked")
                     List<Map<String, Object>> userList = (List<Map<String, Object>>) retMap.get("userList1");
                     // 生成token
-                    ///String token = authorHelper.setSession(userList.get(0));
-                    //resp.sendRedirect("http://www.yzvpf1314.com:8080/login?token="+token);
+                    String token = authorHelper.setSession(userList.get(0));
+                    resp.sendRedirect("http://test1.zhongbohn.com/login?token="+token);
                 }
             }
         }
@@ -208,17 +208,16 @@ public class WwqUserController {
         if(!smsRedisCode.equals(code)){
             return JSONResult.init(501, "短信验证码错误！");
         }
-        String userId = "1";
-//        String userId = authorHelper.getUserId(req);
-//        if(userId == null){
-//            return JSONResult.init(301, "用户未授权!");
-//        }
+        String userId = authorHelper.getUserId(req);
+        if(userId == null){
+            return JSONResult.init(301, "用户未授权!");
+        }
         //保存手机号到数据库以及微信永久二维码
         boolean b = wwqUserService.updateUserPhone(phone, userId);
         if(b){
             //获取用户信息
-            WwqUser retList = wwqUserService.selectUserInfo(userId);
-            if (retList == null) {
+           Map<String,Object> retList = wwqUserService.selectUserInfo1(userId);
+            if (retList == null || retList.size() < 1) {
                 return JSONResult.init(500, "手机号绑定失败!");
             } else {
                 // 生成token
@@ -259,11 +258,10 @@ public class WwqUserController {
     @RequestMapping(value="/userInfo",produces="text/html;charset=UTF-8")
     @ResponseBody
     public String userInfo(HttpServletRequest req){
-        String userId = "1";
-//        String userId = authorHelper.getUserId(req);
-//        if(userId == null){
-//            return JSONResult.init(301, "用户未登录!");
-//        }
+        String userId = authorHelper.getUserId(req);
+        if(userId == null){
+            return JSONResult.init(301, "用户未登录!");
+        }
         Map<String,Object> user = wwqUserService.selectUserInfo1(userId);
         if(user == null){
             return JSONResult.init(301, "用户未登录！");

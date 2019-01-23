@@ -1,6 +1,7 @@
 package com.example.wwq.controller;
 
 
+import com.example.wwq.kit.AuthorHelper;
 import com.example.wwq.kit.JSONResult;
 import com.example.wwq.service.IWwqAddressService;
 import com.example.wwq.service.IWwqOrderService;
@@ -31,6 +32,10 @@ public class WwqAddressController {
     @Autowired
     private IWwqAddressService wwqAddressService;
 
+
+    @Autowired
+    private AuthorHelper authorHelper;
+
     @RequestMapping("/addUserAddress")
     @ResponseBody
     public String addUserAddress(
@@ -43,11 +48,10 @@ public class WwqAddressController {
             @RequestParam(value = "county", required = true) String county,
             @RequestParam(value = "detailAddress", required = true) String detailAddress,
             @RequestParam(value = "defaultAddress", required = true) Integer defaultAddress) {
-            String userId = "1";
-//        String userId = authorHelper.getUserId(req);
-//        if (userId == null) {
-//            return JSONResult.init(301, "success", "user not login");
-//        }
+        String userId = authorHelper.getUserId(req);
+        if (userId == null) {
+            return JSONResult.init(301, "success", "user not login");
+        }
         boolean b = wwqAddressService.addUserAddress(userId, phone,
                 concatName, code, province, city, county, detailAddress,
                 defaultAddress);
@@ -70,11 +74,10 @@ public class WwqAddressController {
             HttpServletRequest req,
             @RequestParam(value = "pageNum", defaultValue = "1", required = true) Integer pageNum,
             @RequestParam(value = "pageSize", defaultValue = "10", required = true) Integer pageSize) {
-        String userId = "1";
-//        String userId = authorHelper.getUserId(req);
-//        if (userId == null) {
-//            return JSONResult.init(301, "success", "user not login");
-//        }
+        String userId = authorHelper.getUserId(req);
+        if (userId == null) {
+            return JSONResult.init(301, "success", "user not login");
+        }
         Map<String, Object> page = wwqAddressService.selectListColumnsByInterface(userId, pageNum, pageSize);
         return JSONResult.init(200, "success", page);
     }
@@ -91,11 +94,10 @@ public class WwqAddressController {
             @RequestParam(value = "id", required = true) String id,
             @RequestParam(value = "pageNum", defaultValue = "1", required = true) Integer pageNum,
             @RequestParam(value = "pageSize", defaultValue = "10", required = true) Integer pageSize) {
-        String userId = "1";
-//        String userId = authorHelper.getUserId(req);
-//        if (userId == null) {
-//            return JSONResult.init(301, "success", "user not login");
-//        }
+        String userId = authorHelper.getUserId(req);
+        if (userId == null) {
+            return JSONResult.init(301, "success", "user not login");
+        }
         PageInfo<Map<String, Object>> pageCityCode = wwqAddressService.getCityCodeList(id, pageNum, pageSize);
         return JSONResult.init(200, "success", pageCityCode);
     }

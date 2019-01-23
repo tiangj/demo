@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 
 @Service
@@ -18,15 +19,17 @@ public class AuthorHelper {
      * @param user
      * @return
      */
-    public String setSession(WwqUser user){
+    public String setSession(Map<String,Object> user){
+        System.out.println("user:"+user.get("id"));
         //生成token,设置token过期时间15天
         String token = java.util.UUID.randomUUID().toString().replaceAll("-", "");
-        Boolean b = manager.set(token, user, 1296000L);
-        if(b){
-            return token;
-        }else{
+        System.out.println("token:"+token);
+        try {
+            manager.set(token, user.get("id").toString(), 1296000L);
+        }catch (Exception e){
             return null;
         }
+        return token;
     }
 
 
@@ -45,14 +48,16 @@ public class AuthorHelper {
                 return null;
             }else{
                 //用token去找redis中的用户信息
-                WwqUser user = (WwqUser) manager.get(token);
-                String id = user.getId();
+                String id = (String) manager.get(token);
                 return id;
             }
         }catch(Exception e){
             return null;
         }
     }
+
+
+
 
 
     /**

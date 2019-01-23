@@ -1,6 +1,7 @@
 package com.example.wwq.controller;
 
 
+import com.example.wwq.kit.AuthorHelper;
 import com.example.wwq.kit.JSONResult;
 import com.example.wwq.service.IWwqOrderService;
 import com.github.pagehelper.PageInfo;
@@ -29,6 +30,9 @@ public class WwqOrderController {
 
 
     @Autowired
+    private AuthorHelper authorHelper;
+
+    @Autowired
     private IWwqOrderService wwqOrderService;
 
     /**
@@ -40,7 +44,10 @@ public class WwqOrderController {
     @RequestMapping(value="/addShopCartProductCartPreOrder",produces="text/html;charset=UTF-8")
     @ResponseBody
     public String addShopCartProductCartPreOrder(HttpServletRequest req, @RequestParam(value="shopCartIds",required=true)String ids){
-        String userId = "1";
+        String userId = authorHelper.getUserId(req);
+        if(userId == null){
+            return JSONResult.init(301, "success", "user not login");
+        }
         List<Map<String, Object>> retList = wwqOrderService.addShopCartProductCartPreOrder(ids,userId);
         if(retList == null || retList.size() < 1){
             return JSONResult.init(500, "fail",null);
@@ -61,7 +68,10 @@ public class WwqOrderController {
     @ResponseBody
     public String addProductToOrder(HttpServletRequest req,@RequestParam(value="productId",required=true)String id,
                                     @RequestParam(value="buyNum",required=true)Integer buyNum){
-        String userId = "1";
+        String userId = authorHelper.getUserId(req);
+        if(userId == null){
+            return JSONResult.init(301, "success", "user not login");
+        }
         Map<String, Object> retMap = wwqOrderService.addProductToOrder(id, buyNum,userId);
         if(retMap == null || retMap.size()<1){
             return JSONResult.init(500, "fail",null);
@@ -84,11 +94,10 @@ public class WwqOrderController {
                                        @RequestParam(value="type",required=true)Integer orderStatus,
                                        @RequestParam(value="pageNum",defaultValue="1",required=true) Integer pageNum,
                                        @RequestParam(value="pageSize",defaultValue="10",required=true) Integer pageSize){
-        String userId = "1";
-//        String userId = authorHelper.getUserId(req);
-//        if(userId == null){
-//            return JSONResult.init(301, "success", "user not login");
-//        }
+        String userId = authorHelper.getUserId(req);
+        if(userId == null){
+            return JSONResult.init(301, "success", "user not login");
+        }
         PageInfo<Map<String, Object>> page = wwqOrderService.shopProductOrderList(userId,orderStatus, pageNum, pageSize);
         return JSONResult.init(200, "success",page);
     }
@@ -101,11 +110,10 @@ public class WwqOrderController {
     @RequestMapping(value="getStatusNumBystatus",produces="text/html;charset=UTF-8")
     @ResponseBody
     public String getStatusNumBystatus(HttpServletRequest req){
-        String userId = "1";
-//        String userId = authorHelper.getUserId(req);
-//        if(userId == null){
-//            return JSONResult.init(301, "success", "user not login");
-//        }
+        String userId = authorHelper.getUserId(req);
+        if(userId == null){
+            return JSONResult.init(301, "success", "user not login");
+        }
         Map<String, Object> Nummap= wwqOrderService.getStatusNumBystatus(userId);
         return JSONResult.init(200, "success",Nummap);
     }
@@ -122,13 +130,36 @@ public class WwqOrderController {
     @ResponseBody
     public String shopProductOrderDetail(HttpServletRequest req,@RequestParam(value="orderId",required=true)String orderId,
                                          @RequestParam(value="orderStatus",required=true)Integer orderStatus){
-		String userId = "1";
-//        String userId = authorHelper.getUserId(req);
-//        if(userId == null){
-//            return JSONResult.init(301, "success", "user not login");
-//        }
+        String userId = authorHelper.getUserId(req);
+        if(userId == null){
+            return JSONResult.init(301, "success", "user not login");
+        }
         List<Map<String,Object>> shopProduct = wwqOrderService.shopProductOrderDetail(userId,orderId,orderStatus);
-        return JSONResult.init(200, "success",shopProduct);
+        if(shopProduct != null && shopProduct.size() > 0) {
+            return JSONResult.init(200, "success", shopProduct);
+        }else{
+            return JSONResult.init(500, "订单信息有误！");
+        }
+    }
+
+
+    /**
+     * 查询配送时间和配送方式
+     * @return
+     */
+    @RequestMapping(value="/selectPostDateAndWay",produces="text/html;charset=UTF-8")
+    @ResponseBody
+    public String selectPostDateAndWay(HttpServletRequest req,String productId){
+        String userId = authorHelper.getUserId(req);
+        if(userId == null){
+            return JSONResult.init(301, "success", "user not login");
+        }
+        Map<String, Object> dateAndWay = wwqOrderService.selectPostDateAndWay(userId,productId);
+        if (dateAndWay==null) {
+            return JSONResult.init(500, "false", "table not date");
+        }
+        return JSONResult.init(200, "success", dateAndWay);
+
     }
 }
 

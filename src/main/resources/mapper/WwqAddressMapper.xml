@@ -41,7 +41,7 @@
 				LEFT JOIN wwq_user AS su ON su.id = sa.user_id
 				WHERE sa.user_id = #{userId}
 				AND sa.delete_flag = 0
-				AND su.deleteFlag = 0
+				AND su.delete_flag = 0
     </select>
 
 
@@ -56,7 +56,7 @@
         </if>
     </select>
 
-    <select id="getDefaultAddress" resultType="com.example.wwq.entity.WwqAddress">
+    <select id="getDefaultAddress" parameterType="java.lang.String" resultType="com.example.wwq.entity.WwqAddress">
         select * from wwq_address as sa WHERE sa.default_address = 1 and sa.delete_flag = 0
     </select>
 

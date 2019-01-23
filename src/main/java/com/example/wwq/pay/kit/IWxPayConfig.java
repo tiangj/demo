@@ -18,15 +18,15 @@ public interface IWxPayConfig {
 //	#微信公众号支付签名密钥
 //	wx.wxPublicPay.partnerkey=zhengyin20170104139xxxx868100001
 	//象谷传媒
-	public static String WX_WXPUBLIC_APPID = "wx515e06f595911921";
+	public static String WX_WXPUBLIC_APPID = "wx4dc254fa5905cd27";
 	//象谷传媒
-	public static String WX_WXPUBLIC_MATCH_ID = "1253811901";
+	public static String WX_WXPUBLIC_MATCH_ID = "1520869731";
 	//支付模式
 	public static String WX_WXPUBLIC_TRADE_TYPE = "JSAPI";
 	//回调地址
-	public static String WX_WXPUBLIC_NOTITY_URL = "http://shop.hnguwei.com/ShopClient/wxPayCallBack/callBack.do";
+	public static String    WX_WXPUBLIC_NOTITY_URL = "http://test.zhongbohn.com/demo/wxPayCallBack/callBack";
 	//暂时使用象谷传媒的秘钥
-	public static String WX_WXPUBLIC_PARTNER_KEY = "2151a2bc77807b81113febbf50c4bc95";
+	public static String WX_WXPUBLIC_PARTNER_KEY = "wanwuanquan201901128888888888888";
 
 	public static  String CREATE_MENU_URL = " https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN";
 }

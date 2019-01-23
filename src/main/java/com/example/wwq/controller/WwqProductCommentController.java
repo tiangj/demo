@@ -1,6 +1,7 @@
 package com.example.wwq.controller;
 
 
+import com.example.wwq.kit.AuthorHelper;
 import com.example.wwq.kit.JSONResult;
 import com.example.wwq.service.IWwqProductCommentService;
 import com.github.pagehelper.PageInfo;
@@ -28,6 +29,9 @@ public class WwqProductCommentController {
 
 @Autowired
 private IWwqProductCommentService wwqProductCommentService;
+
+@Autowired
+private AuthorHelper authorHelper;
 
     /**
      * 商品评论列表
@@ -68,11 +72,11 @@ private IWwqProductCommentService wwqProductCommentService;
     public String addShopProductComment(HttpServletRequest req, @RequestParam(value="productId",required=true) String id,
                                         @RequestParam(value="praise",required=true) Integer praise,
                                         @RequestParam(value="content",required=true) String content){
-        String userId = "1";
-        //String userId = authorHelper.getUserId(req);
-//        if(userId == null){
-//            return JSONResult.init(301, "success", "user not login");
-//        }
+
+        String userId = authorHelper.getUserId(req);
+        if(userId == null){
+            return JSONResult.init(301, "success", "user not login");
+        }
         int ret = wwqProductCommentService.addShopProductComment(id, userId, content, praise);
         return JSONResult.init(200, "success", ret);
     }
