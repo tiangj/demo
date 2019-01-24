@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -187,14 +188,21 @@ public class WwqPayServiceImpl extends ServiceImpl<WwqPayMapper, WwqPay> impleme
             if(wwqPay.getConsumePoint() <= 0){
                 return true;
             }
-            BigDecimal avPoint = new BigDecimal(wwqPay.getConsumePoint()).divide(new BigDecimal(22)).setScale(0,java.math.BigDecimal.ROUND_DOWN);
+            //BigDecimal avPoint = new BigDecimal(wwqPay.getConsumePoint()).divide(new BigDecimal(22)).setScale(0,java.math.BigDecimal.ROUND_DOWN);
+            //.divide(settleAmount,4,RoundingMode.HALF_UP));
+            BigDecimal avPoint = new BigDecimal(wwqPay.getConsumePoint()).divide(new BigDecimal(22),0, RoundingMode.DOWN);
+            BigDecimal lastPoint = new BigDecimal(500).subtract(avPoint.multiply(new BigDecimal(22)));
             for(int j = 0;j < 22;j++) {
                 WwqOrderScore wwqOrderScore = new WwqOrderScore();
                 wwqOrderScore.setCreateDate(new Date());
                 wwqOrderScore.setCreateUser(wwqPay.getCreateUser());
                 wwqOrderScore.setDeleteFlag(0);
                 wwqOrderScore.setExecuteFlag(0);
-                wwqOrderScore.setIntegral(avPoint.intValue());
+                if(j ==21) {
+                    wwqOrderScore.setIntegral(lastPoint.intValue());
+                }else{
+                    wwqOrderScore.setIntegral(avPoint.intValue());
+                }
                 wwqOrderScore.setOrderId(payId);
                 wwqOrderScore.setSort(j);
                 wwqOrderScore.setUpdateDate(new Date());
@@ -207,8 +215,8 @@ public class WwqPayServiceImpl extends ServiceImpl<WwqPayMapper, WwqPay> impleme
         //查找当前下单用户是否存在上级
         //如果有上级，则上级直接拿3%的佣金
         Map<String,Object> map = new HashMap<>();
-        map.put("userId",wwqPay.getUserId());
-        map.put("deleteFlag",0);
+        map.put("user_id",wwqPay.getUserId());
+        map.put("delete_flag",0);
         List<WwqShareUserConcart> list = wwqShareUserConcartMapper.selectByMap(map);
         if(list == null || list.size()<1){
             return true;
@@ -217,17 +225,17 @@ public class WwqPayServiceImpl extends ServiceImpl<WwqPayMapper, WwqPay> impleme
         this.updateUserShareAmountConcart(list.get(0).getParentId(),shareAmount);
         //查询当前用户的上级是否存在上级
         Map<String,Object> map1 = new HashMap<>();
-        map1.put("userId",list.get(0).getParentId());
-        map1.put("deleteFlag",0);
-        List<WwqShareUserConcart> list1 = wwqShareUserConcartMapper.selectByMap(map);
+        map1.put("user_id",list.get(0).getParentId());
+        map1.put("delete_flag",0);
+        List<WwqShareUserConcart> list1 = wwqShareUserConcartMapper.selectByMap(map1);
         if(list1 == null || list1.size()<1){
             return true;
         }
         //如果存在，判断上级的上级是否有12个直接下级，以及所有一二级下级是否有120个人
         Map<String,Object> map2 = new HashMap<>();
-        map2.put("userId",list.get(0).getParentId());
-        map2.put("deleteFlag",0);
-        List<WwqShareCount> list2 = wwqShareCountMapper.selectByMap(map);
+        map2.put("user_id",list1.get(0).getParentId());
+        map2.put("delete_flag",0);
+        List<WwqShareCount> list2 = wwqShareCountMapper.selectByMap(map2);
         if(list2 == null || list2.size()<1){
             return true;
         }
@@ -240,10 +248,17 @@ public class WwqPayServiceImpl extends ServiceImpl<WwqPayMapper, WwqPay> impleme
 
 
     public boolean updateUserShareAmountConcart(String userId,BigDecimal shareAmount){
+        //根据openId查询用户的id
+        Map<String,Object> map1 = new HashMap<>();
+        map1.put("openid",userId);
+        List<Map<String,Object>> list1 = wwqUserMapper.selectInfoById(map1);
+        if(list1 == null || list1.size() < 1){
+            return false;
+        }
         //查询当前用户是否有记录
         Map<String,Object> map = new HashMap<>();
-        map.put("userId",userId);
-        map.put("deleteFlag",0);
+        map.put("user_id",list1.get(0).get("id"));
+        map.put("delete_flag",0);
         List<WwqUserShareAmount> list = wwqUserShareAmountMapper.selectByMap(map);
         if(list == null || list.size()<1){
             WwqUserShareAmount amount = new WwqUserShareAmount();

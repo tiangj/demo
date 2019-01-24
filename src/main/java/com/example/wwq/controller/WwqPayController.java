@@ -50,7 +50,6 @@ public class WwqPayController {
      * @param req
      * @param orderType 下单方式（1：购物车下单;2:商品详情页下单）
      * @param ids 购物车Id（orderType为1时传入）
-     * @param postWayType 商品分类（1：实物；2：服务）
      * @param postDateId 收货时间
      * @param addressId 收货地址id
      * @param id 商品id（orderType为2时传入）
@@ -64,7 +63,6 @@ public class WwqPayController {
     public String pay(HttpServletRequest req,
                       @RequestParam(value="orderType",required=true)Integer orderType,
                       @RequestParam(value="shopCartIds",required=true)String ids,
-                      @RequestParam(value="postWayType",required=true)Integer postWayType,
                       @RequestParam(value="postDateId",required=true)String postDateId,
                       @RequestParam(value="addressId",required=false)String addressId,
                       @RequestParam(value="productId",required=true)String id,
@@ -79,9 +77,9 @@ public class WwqPayController {
         List<Map<String, Object>> retList = null;
         //先生成商品订单
         if(orderType == 1){
-            retList = wwqOrderService.addShopProductCartOrder(userId, ids, postWayType, postDateId, payWay, remark,addressId);
+            retList = wwqOrderService.addShopProductCartOrder(userId, ids, postDateId, payWay, remark,addressId);
         }else{
-            retList = wwqOrderService.addShopProductOrder(userId, id, buyNum, postWayType, postDateId, payWay,remark,addressId);
+            retList = wwqOrderService.addShopProductOrder(userId, id, buyNum, postDateId, payWay,remark,addressId);
         }
         System.out.println("订单列表："+retList);
         //再生成支付订单

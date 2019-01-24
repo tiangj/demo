@@ -203,13 +203,9 @@ public class WwqOrderServiceImpl extends ServiceImpl<WwqOrderMapper, WwqOrder> i
             if(product != null){
                 postPrice = product.getPostPrice();
                 totalPostPrice = totalPostPrice.add(postPrice);
-            }
-//            if(product.getPostPrice().compareTo(new BigDecimal(0)) == 0){
-//                postPrice = new BigDecimal(0);
-//            }else{
+            }else {
                 postPrice = new BigDecimal(0);
-//            }
-
+            }
         }
         shopPay.get(0).put("postPrice", postPrice);
         shopPay.get(0).put("orderList", lists);
@@ -235,7 +231,7 @@ public class WwqOrderServiceImpl extends ServiceImpl<WwqOrderMapper, WwqOrder> i
 
     @Transactional
     @Override
-    public List<Map<String, Object>> addShopProductCartOrder(String userId, String ids, Integer postWayType, String postDateId, Integer payWay, String remark, String addressId) {
+    public List<Map<String, Object>> addShopProductCartOrder(String userId, String ids, String postDateId, Integer payWay, String remark, String addressId) {
         List<Map<String, Object>> shopOrderList = null;
         String[] shopCartIds = ids.split(",");
         for(int i = 0 ; i < shopCartIds.length ; i ++){
@@ -261,7 +257,6 @@ public class WwqOrderServiceImpl extends ServiceImpl<WwqOrderMapper, WwqOrder> i
             shopOrder.setOrderStatus(100);
             shopOrder.setPayStatus(100);
             shopOrder.setProductId(shopCart.getProductId());
-            shopOrder.setProductTypeId(shopCart.getProductTypeId());
             shopOrder.setUserId(userId);
             shopOrder.setCreateDate(new Date());
             shopOrder.setCreateUser(userId);
@@ -269,9 +264,9 @@ public class WwqOrderServiceImpl extends ServiceImpl<WwqOrderMapper, WwqOrder> i
             shopOrder.setUpdateUser(userId);
             shopOrder.setPayWay(payWay);
             shopOrder.setPostDateId(postDateId);
-            shopOrder.setPostWayType(postWayType);
+            shopOrder.setPostWayType(wwqProduct.getProductType());
             shopOrder.setMessage(remark);
-            if(postWayType == 1){
+            if(wwqProduct.getProductType() == 1){
                 shopOrder.setAddressId(addressId);
             }
             int ret = wwqOrderMapper.insert(shopOrder);
@@ -288,27 +283,21 @@ public class WwqOrderServiceImpl extends ServiceImpl<WwqOrderMapper, WwqOrder> i
             shopOrderDetail.setUpdateDate(new Date());
             shopOrderDetail.setUpdateUser(userId);
             int ret1 = wwqOrderDetailMapper.insert(shopOrderDetail);
-            if(ret1 > 0){
-                WwqCart record = new WwqCart();
-                record.setId(shopCartIds[i]);
-                record.setDeleteFlag(1);
-                wwqCartMapper.updateById(record);
-            }else{
-                new Exception();
-                return null;
-            }
+            WwqCart record = new WwqCart();
+            record.setId(shopCartIds[i]);
+            record.setDeleteFlag(1);
+            wwqCartMapper.updateById(record);
             Map<String, Object> preOrder = null;
             preOrder.put("orderId", shopOrder.getId());
             preOrder.put("product_id", shopOrder.getProductId());
             preOrder.put("orderPrice", shopOrder.getOrderTotalPrice());
             shopOrderList.add(preOrder);
-
         }
         return shopOrderList;
     }
 
     @Override
-    public List<Map<String, Object>> addShopProductOrder(String userId, String id,Integer buyNum,Integer postWayType,String postDateId,Integer payWay,String remark,String addressId) {
+    public List<Map<String, Object>> addShopProductOrder(String userId, String id,Integer buyNum,String postDateId,Integer payWay,String remark,String addressId) {
         List<Map<String, Object>> shopOrderList = new ArrayList<>();
         //查询商品信息
         WwqProduct wwqProduct = wwqProductMapper.selectById(id);
@@ -333,9 +322,9 @@ public class WwqOrderServiceImpl extends ServiceImpl<WwqOrderMapper, WwqOrder> i
         shopOrder.setUpdateUser(userId);
         shopOrder.setPayWay(payWay);
         shopOrder.setPostDateId(postDateId);
-        shopOrder.setPostWayType(postWayType);
+        shopOrder.setPostWayType(wwqProduct.getProductType());
         shopOrder.setMessage(remark);
-        if(postWayType == 1){
+        if(wwqProduct.getProductType() == 1){
             shopOrder.setAddressId(addressId);
         }
         int ret = wwqOrderMapper.insert(shopOrder);
@@ -390,12 +379,10 @@ public class WwqOrderServiceImpl extends ServiceImpl<WwqOrderMapper, WwqOrder> i
      * 查询配送时间和配送方式
      */
     @Override
-    public Map<String, Object> selectPostDateAndWay(String userId,String productId) {
+    public Map<String, Object> selectPostDateAndWay(String userId) {
         Map<String, Object> retMap = new HashMap<>();
-        List<Map<String, Object>> selectPostDate =  wwqOrderMapper.selectPostDate(productId);
-        Map<String, Object> example2 = new HashMap<>();
-        example2.put("productId", productId);
-        List<Map<String, Object>> selectPostWay =  wwqOrderMapper.selectPostWay(productId);
+        List<Map<String, Object>> selectPostDate =  wwqOrderMapper.selectPostDate();
+        List<Map<String, Object>> selectPostWay =  wwqOrderMapper.selectPostWay();
         WwqAddress address = wwqOrderMapper.selectDefaultAddress(userId);
         retMap.put("selectPostDate", selectPostDate);
         retMap.put("selectPostWay", selectPostWay);

@@ -15,7 +15,7 @@ import java.io.Serializable;
  * </p>
  *
  * @author generator-plus123
- * @since 2018-12-29
+ * @since 2019-01-23
  */
 @TableName("wwq_order")
 public class WwqOrder extends Model<WwqOrder> {
@@ -34,16 +34,6 @@ public class WwqOrder extends Model<WwqOrder> {
     @TableField("product_id")
     private String productId;
     /**
-     * 商品规格表的id
-     */
-    @TableField("product_type_id")
-    private String productTypeId;
-    /**
-     * 商品使用的优惠券记录表id
-     */
-    @TableField("product_cupon_id")
-    private String productCuponId;
-    /**
      * 下单商品数
      */
     @TableField("order_num")
@@ -54,15 +44,15 @@ public class WwqOrder extends Model<WwqOrder> {
     @TableField("order_total_price")
     private BigDecimal orderTotalPrice;
     /**
-     * 订单实际支付的价格
-     */
-    @TableField("order_real_price")
-    private BigDecimal orderRealPrice;
-    /**
-     * 100:快递；200：自提
+     * 100:快递；200：自提；300：到店消费
      */
     @TableField("post_way_type")
     private Integer postWayType;
+    /**
+     * 地址id
+     */
+    @TableField("address_id")
+    private String addressId;
     /**
      * 送货时间,shop_post_date表的id
      */
@@ -73,7 +63,7 @@ public class WwqOrder extends Model<WwqOrder> {
      */
     private String message;
     /**
-     * 订单状态（与详情表同步）
+     * 订单状态（与详情表同步)(100：未支付；200：已支付；300：门店备货；400：发货；500：评价；600：订单完成)
      */
     @TableField("order_status")
     private Integer orderStatus;
@@ -88,7 +78,7 @@ public class WwqOrder extends Model<WwqOrder> {
     @TableField("pay_way")
     private Integer payWay;
     /**
-     * 备注(直接插入店铺id)
+     * 备注
      */
     private String remark;
     /**
@@ -116,11 +106,6 @@ public class WwqOrder extends Model<WwqOrder> {
      */
     @TableField("delete_flag")
     private Integer deleteFlag;
-    /**
-     * 地址id
-     */
-    @TableField("address_id")
-    private String addressId;
 
 
     public String getId() {
@@ -147,22 +132,6 @@ public class WwqOrder extends Model<WwqOrder> {
         this.productId = productId;
     }
 
-    public String getProductTypeId() {
-        return productTypeId;
-    }
-
-    public void setProductTypeId(String productTypeId) {
-        this.productTypeId = productTypeId;
-    }
-
-    public String getProductCuponId() {
-        return productCuponId;
-    }
-
-    public void setProductCuponId(String productCuponId) {
-        this.productCuponId = productCuponId;
-    }
-
     public Integer getOrderNum() {
         return orderNum;
     }
@@ -179,20 +148,20 @@ public class WwqOrder extends Model<WwqOrder> {
         this.orderTotalPrice = orderTotalPrice;
     }
 
-    public BigDecimal getOrderRealPrice() {
-        return orderRealPrice;
-    }
-
-    public void setOrderRealPrice(BigDecimal orderRealPrice) {
-        this.orderRealPrice = orderRealPrice;
-    }
-
     public Integer getPostWayType() {
         return postWayType;
     }
 
     public void setPostWayType(Integer postWayType) {
         this.postWayType = postWayType;
+    }
+
+    public String getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(String addressId) {
+        this.addressId = addressId;
     }
 
     public String getPostDateId() {
@@ -283,35 +252,21 @@ public class WwqOrder extends Model<WwqOrder> {
         this.deleteFlag = deleteFlag;
     }
 
-    public String getAddressId() {
-        return addressId;
-    }
-
-    public void setAddressId(String addressId) {
-        this.addressId = addressId;
-    }
-
     public static final String ID = "id";
 
     public static final String USER_ID = "user_id";
 
     public static final String PRODUCT_ID = "product_id";
 
-    public static final String PRODUCT_TYPE_ID = "product_type_id";
-
-    public static final String PRODUCT_CUPON_ID = "product_cupon_id";
-
     public static final String ORDER_NUM = "order_num";
 
     public static final String ORDER_TOTAL_PRICE = "order_total_price";
 
-    public static final String ORDER_REAL_PRICE = "order_real_price";
-
     public static final String POST_WAY_TYPE = "post_way_type";
 
-    public static final String POST_DATE_ID = "post_date_id";
+    public static final String ADDRESS_ID = "address_id";
 
-    public static final String CONSUME_POINT = "consume_point";
+    public static final String POST_DATE_ID = "post_date_id";
 
     public static final String MESSAGE = "message";
 
@@ -333,8 +288,6 @@ public class WwqOrder extends Model<WwqOrder> {
 
     public static final String DELETE_FLAG = "delete_flag";
 
-    public static final String ADDRESS_ID = "address_id";
-
     @Override
     protected Serializable pkVal() {
         return this.id;
@@ -346,12 +299,10 @@ public class WwqOrder extends Model<WwqOrder> {
         "id=" + id +
         ", userId=" + userId +
         ", productId=" + productId +
-        ", productTypeId=" + productTypeId +
-        ", productCuponId=" + productCuponId +
         ", orderNum=" + orderNum +
         ", orderTotalPrice=" + orderTotalPrice +
-        ", orderRealPrice=" + orderRealPrice +
         ", postWayType=" + postWayType +
+        ", addressId=" + addressId +
         ", postDateId=" + postDateId +
         ", message=" + message +
         ", orderStatus=" + orderStatus +
@@ -363,7 +314,6 @@ public class WwqOrder extends Model<WwqOrder> {
         ", updateDate=" + updateDate +
         ", updateUser=" + updateUser +
         ", deleteFlag=" + deleteFlag +
-        ", addressId=" + addressId +
         "}";
     }
 }

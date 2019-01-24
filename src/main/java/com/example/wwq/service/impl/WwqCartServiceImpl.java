@@ -48,15 +48,9 @@ public class WwqCartServiceImpl extends ServiceImpl<WwqCartMapper, WwqCart> impl
             return 0;
         }
         // 查询会员情况
-        WwqMember wwqMember = wwqMemberMapper.selectProductInfoByUserKey(userId);
         BigDecimal totalPrice;
-        if(wwqMember == null){
-            //非会员计算总价
-            totalPrice = shopProduct.getProductOrginPrice().multiply(new BigDecimal(buyNum));
-        }else {
-            //会员计算总价
-           totalPrice = shopProduct.getProductNowPrice().multiply(new BigDecimal(buyNum));
-        }
+        //会员计算总价
+        totalPrice = shopProduct.getProductNowPrice().multiply(new BigDecimal(buyNum));
         //查询购物车中是否存在当前商品
         Map<String, Object> example = new HashMap<>();
         example.put("productId", productId);

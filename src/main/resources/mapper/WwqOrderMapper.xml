@@ -7,14 +7,11 @@
         <id column="id" property="id" />
         <result column="user_id" property="userId" />
         <result column="product_id" property="productId" />
-        <result column="product_type_id" property="productTypeId" />
-        <result column="product_cupon_id" property="productCuponId" />
         <result column="order_num" property="orderNum" />
         <result column="order_total_price" property="orderTotalPrice" />
-        <result column="order_real_price" property="orderRealPrice" />
         <result column="post_way_type" property="postWayType" />
+        <result column="address_id" property="addressId" />
         <result column="post_date_id" property="postDateId" />
-        <result column="consume_point" property="consumePoint" />
         <result column="message" property="message" />
         <result column="order_status" property="orderStatus" />
         <result column="pay_status" property="payStatus" />
@@ -25,14 +22,12 @@
         <result column="update_date" property="updateDate" />
         <result column="update_user" property="updateUser" />
         <result column="delete_flag" property="deleteFlag" />
-        <result column="address_id" property="addressId" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id AS userId, product_id AS productId, product_type_id AS productTypeId, product_cupon_id AS productCuponId, order_num AS orderNum, order_total_price AS orderTotalPrice, order_real_price AS orderRealPrice, post_way_type AS postWayType, post_date_id AS postDateId, consume_point AS consumePoint, message, order_status AS orderStatus, pay_status AS payStatus, pay_way AS payWay, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, delete_flag AS deleteFlag, address_id AS addressId
+        id, user_id AS userId, product_id AS productId, order_num AS orderNum, order_total_price AS orderTotalPrice, post_way_type AS postWayType, address_id AS addressId, post_date_id AS postDateId, message, order_status AS orderStatus, pay_status AS payStatus, pay_way AS payWay, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, delete_flag AS deleteFlag
     </sql>
-
 
     <select id="shopPayList" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT
@@ -134,15 +129,16 @@
 
 
     <select id="selectPostDate" parameterType="java.lang.String" resultType="java.util.Map">
-          SELECT wpw.`id` ,wpw.`post_way_name`  FROM `wwq_post_way` as wpw LEFT JOIN `wwq_product_detail` as wpd on wpd.`post_way_id` = wpw.`id` and wpd.`deleteFlag` = 0 WHERE wpd.`shop_product_id` =#{productId} and wpw.`delete_flag`  = 0
+          SELECT wpw.`id` ,wpw.`post_way_name`  FROM `wwq_post_way` as wpw WHERE wpw.`delete_flag`  = 0
     </select>
 
 
     <select id="selectPostWay" parameterType="java.lang.String" resultType="java.util.Map">
-          SELECT wpw.`id` ,wpw.`post_way_date`  FROM `wwq_post_date` as wpw LEFT JOIN `wwq_product_detail` as wpd on wpd.`post_date_id` = wpw.`id` and wpd.`deleteFlag` = 0 WHERE wpd.`shop_product_id` =#{productId} and wpw.`delete_flag`  = 0
+          SELECT wpw.`id` ,wpw.`post_date_name`  FROM `wwq_post_date` as wpw WHERE wpw.`delete_flag`  = 0
     </select>
 
     <select id="selectDefaultAddress" resultType="java.lang.String" parameterType="java.util.Map">
         select * from wwq_address as sa WHERE sa.default_address = 1 and sa.delete_flag = 0 AND sa.user_id = #{userId}
     </select>
+
 </mapper>

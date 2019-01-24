@@ -27,9 +27,9 @@ public interface WwqOrderMapper extends BaseMapper<WwqOrder> {
 
     List<Map<String,Object>> shopProductOrderListById(Map<String,Object> map);
 
-    List<Map<String,Object>> selectPostDate(String productId);
+    List<Map<String,Object>> selectPostDate();
 
-    List<Map<String,Object>> selectPostWay(String productId);
+    List<Map<String,Object>> selectPostWay();
 
     WwqAddress selectDefaultAddress(String userId);
 }
