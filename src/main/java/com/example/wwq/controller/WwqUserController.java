@@ -74,6 +74,12 @@ public class WwqUserController {
             resp.sendRedirect(url);
             return null;
         }
+
+
+
+
+
+
         /*
          * ram resp
          * @param code
@@ -112,19 +118,19 @@ public class WwqUserController {
             System.out.println("retMap =====" +userInfo);
             //控制页面跳转
             if (retMap == null || retMap.size() < 1) {
-                resp.sendRedirect("http://test1.zhongbohn.com/login");
+                resp.sendRedirect("http://www.wanwuquanhn.com/login");
             } else {
                 if(Integer.parseInt(retMap.get("code").toString()) == 200){
                     List<Map<String, Object>> userList = (List<Map<String, Object>>) retMap.get("userList1");
                     String userToken = authorHelper.setSession(userList.get(0));
-                    resp.sendRedirect("http://test1.zhongbohn.com/?token="+userToken);
+                    resp.sendRedirect("http://www.wanwuquanhn.com/?token="+userToken);
                 }else{
                     // 得到用户id
                     @SuppressWarnings("unchecked")
                     List<Map<String, Object>> userList = (List<Map<String, Object>>) retMap.get("userList1");
                     // 生成token
                     String token = authorHelper.setSession(userList.get(0));
-                    resp.sendRedirect("http://test1.zhongbohn.com/login?token="+token);
+                    resp.sendRedirect("http://www.wanwuquanhn.com/login?token="+token);
                 }
             }
         }

@@ -25,9 +25,9 @@ public class Menu {
 //        button11.setKey("11");
 
         ViewButton button21 = new ViewButton();
-        button21.setName("万物商城（测试链接百度）");
+        button21.setName("万物商城");
         button21.setType("view");
-        button21.setUrl("http://www.baidu.com");//我这里测试使用百度网站
+        button21.setUrl("http://www.wanwuquanhn.com");//我这里测试使用百度网站
 //
 //        ClickButton button31 = new ClickButton();
 //        button31.setName("扫码事件");

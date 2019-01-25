@@ -232,7 +232,7 @@ public class WwqOrderServiceImpl extends ServiceImpl<WwqOrderMapper, WwqOrder> i
     @Transactional
     @Override
     public List<Map<String, Object>> addShopProductCartOrder(String userId, String ids, String postDateId, Integer payWay, String remark, String addressId) {
-        List<Map<String, Object>> shopOrderList = null;
+        List<Map<String, Object>> shopOrderList = new ArrayList<>();
         String[] shopCartIds = ids.split(",");
         for(int i = 0 ; i < shopCartIds.length ; i ++){
             //查询购物车信息
@@ -287,8 +287,8 @@ public class WwqOrderServiceImpl extends ServiceImpl<WwqOrderMapper, WwqOrder> i
             record.setId(shopCartIds[i]);
             record.setDeleteFlag(1);
             wwqCartMapper.updateById(record);
-            Map<String, Object> preOrder = null;
-            preOrder.put("orderId", shopOrder.getId());
+            Map<String, Object> preOrder = new HashMap<>();
+            preOrder.put("orderId", shopOrderDetail.getOrderId());
             preOrder.put("product_id", shopOrder.getProductId());
             preOrder.put("orderPrice", shopOrder.getOrderTotalPrice());
             shopOrderList.add(preOrder);

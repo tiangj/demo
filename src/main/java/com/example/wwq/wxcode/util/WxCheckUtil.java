@@ -12,7 +12,7 @@ import java.util.Arrays;
 * @date 2018年10月11日
  */
 public class WxCheckUtil {
-	private static final String token = "ceshi123456";
+	private static final String token = "wwq8888";
 	
 	public static boolean checkSignature(String signature, String timestamp,String nonce) {
 		
@@ -32,6 +32,7 @@ public class WxCheckUtil {
             // 将三个参数字符串拼接成一个字符串进行sha1加密
             byte[] digest = md.digest(content.toString().getBytes());
             tmpStr = byteToStr(digest);
+            System.out.println("tmpStr:"+tmpStr);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }

@@ -8,45 +8,63 @@ import com.example.wwq.wxcode.util.WxCheckUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/wwqWxcode")
 public class WwqWxcodeController {
 
-
     @Autowired
     private IWwqShareUserConcartService wwqShareUserConcartService;
 
+    @RequestMapping(value="/test")
+    public ModelAndView test(){
+        ModelAndView model = new ModelAndView();
+        model.addObject("echostr","1111111");
+        model.setViewName("wxCodecallBack");
+        return model;
+    }
+
+
     @RequestMapping(value="/verification")
-    public String verification(HttpServletRequest request, HttpServletResponse response) throws Exception{
+    public ModelAndView verification(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        System.out.println("进入了回调！");
+        System.out.println("域名："+request.getServerName());
         // 微信加密签名
         String signature = request.getParameter("signature");
+        System.out.println("signature"+signature);
         // 时间戳
         String timestamp = request.getParameter("timestamp");
         // 随机数
         String nonce = request.getParameter("nonce");
         // 随机字符串
-//		String echostr = request.getParameter("echostr");
-
-        if (WxCheckUtil.checkSignature(signature, timestamp, nonce)) {
-            return null;
+		String echostr = request.getParameter("echostr");
+        boolean isGet = request.getMethod().toLowerCase().equals("get");
+        if (isGet) {
+           WxCheckUtil.checkSignature(signature, timestamp, nonce);
+            PrintWriter out = response.getWriter();
+            out.print(echostr);
+            out.close();
+            out = null;
+        }else {
+            // 将请求、响应的编码均设置为UTF-8（防止中文乱码）
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
+            // 调用核心业务类接收消息、处理消息
+            String respMessage = this.processRequest(request);
+            //响应消息
+            PrintWriter out = response.getWriter();
+            out.print(respMessage);
+            out.flush();
+            out.close();
         }
-        // 将请求、响应的编码均设置为UTF-8（防止中文乱码）
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        // 调用核心业务类接收消息、处理消息
-        String respMessage = this.processRequest(request);
-        //响应消息
-        PrintWriter out = response.getWriter();
-        out.print(respMessage);
-        out.flush();
-        out.close();
         return null;
     }
 
@@ -60,6 +78,7 @@ public class WwqWxcodeController {
 
             // xml请求解析
             Map<String, String> requestMap = MessageUtil.parseXml(request);
+            System.out.println("requestMap:"+requestMap);
             // 发送方帐号（open_id）
             String fromUserName = requestMap.get("FromUserName");
             // 公众帐号
@@ -71,14 +90,13 @@ public class WwqWxcodeController {
             //事件KEY值，qrscene_为前缀，后面为二维码的参数值
             String eventKey = requestMap.get("EventKey");
             String userId = eventKey.substring(eventKey.lastIndexOf('_')+1);
-            System.out.println("userId-------------->"+userId);
+            System.out.println("------------》》》》》》》userId-------------->"+userId);
             //二维码的ticket，可用来换取二维码图片
             String ticket = requestMap.get("Ticket");
             //事件类型，SCAN
             String event = requestMap.get("Event");
             if (event.equals("subscribe")) {
                 if(userId != null && fromUserName != null){
-                    //待实现
                     WwqShareUserConcart wwqShareUserConcart = new WwqShareUserConcart();
                     wwqShareUserConcart.setUserId(userId);
                     wwqShareUserConcart.setParentId(fromUserName);
@@ -87,13 +105,10 @@ public class WwqWxcodeController {
                     wwqShareUserConcart.setCreateUser(userId);
                     wwqShareUserConcart.setUpdateDate(new Date());
                     wwqShareUserConcart.setUpdateUser(userId);
-                    wwqShareUserConcartService.insert(wwqShareUserConcart);
+                    wwqShareUserConcartService.createShareUserConcart(wwqShareUserConcart);
                 }
             }else if(event.equals("unsubscribe")){
-                if(fromUserName != null){
-                    //待实现
 
-                }
                 return event;
             }
         } catch (Exception e) {

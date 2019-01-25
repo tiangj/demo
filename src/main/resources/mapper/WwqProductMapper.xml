@@ -67,7 +67,7 @@
             and sp.recommend_boutique=1
         </if>
         <if test="type == 2">
-            and sp.recommend_brand=1
+            and sp.recommend_brand=0
         </if>
     </select>
 

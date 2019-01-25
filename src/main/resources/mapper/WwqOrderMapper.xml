@@ -129,12 +129,12 @@
 
 
     <select id="selectPostDate" parameterType="java.lang.String" resultType="java.util.Map">
-          SELECT wpw.`id` ,wpw.`post_way_name`  FROM `wwq_post_way` as wpw WHERE wpw.`delete_flag`  = 0
+          SELECT wpw.`id` ,wpw.`post_date_name`  FROM `wwq_post_date` as wpw WHERE wpw.`delete_flag`  = 0
     </select>
 
 
     <select id="selectPostWay" parameterType="java.lang.String" resultType="java.util.Map">
-          SELECT wpw.`id` ,wpw.`post_date_name`  FROM `wwq_post_date` as wpw WHERE wpw.`delete_flag`  = 0
+          SELECT wpw.`id` ,wpw.`post_way_name`  FROM `wwq_post_way` as wpw WHERE wpw.`delete_flag`  = 0
     </select>
 
     <select id="selectDefaultAddress" resultType="java.lang.String" parameterType="java.util.Map">

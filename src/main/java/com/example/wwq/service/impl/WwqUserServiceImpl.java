@@ -86,8 +86,18 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
             //做插入操作
             wwqUserMapper.insert(shopUser);
             List<Map<String, Object>> userList1 = wwqUserMapper.selectInfoById(example);
-            map.put("userList1", userList1);
-            map.put("code", 200);
+            try {
+                if (StringUtils.isBlank(userList1.get(0).get("phone").toString())) {
+                    map.put("code", 200);
+                    map.put("userList1", userList1);
+                } else {
+                    map.put("code", 300);
+                    map.put("userList1", userList1);
+                }
+            }catch (Exception e){
+                map.put("code", 300);
+                map.put("userList1", userList1);
+            }
             return map;
         }else{
             shopUser.setId(userList.get(0).get("id").toString());
@@ -117,7 +127,7 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
             WwqUser shopUser = new WwqUser();
             shopUser.setPhone(phone);
             shopUser.setId(userId);
-            String filePath = uploadFolder+"/"+userId+".jpg";
+            String filePath = staticAccessPath+"/"+userId+".jpg";
             String wxCode = WechatKit.productWxCodeUtil(userId,filePath);
             shopUser.setWxCode(wxCode);
             wwqUserMapper.updateById(shopUser);

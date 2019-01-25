@@ -13,4 +13,6 @@ import com.baomidou.mybatisplus.service.IService;
  */
 public interface IWwqShareUserConcartService extends IService<WwqShareUserConcart> {
 
+
+    Boolean createShareUserConcart(WwqShareUserConcart wwqShareUserConcart);
 }
