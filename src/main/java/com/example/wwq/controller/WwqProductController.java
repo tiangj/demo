@@ -115,38 +115,57 @@ public class WwqProductController {
         return "product/list";
     }
 
-    /*****
-     * 加载商品列表
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping("listData")
-    public Map<String,Object> listData(Integer page, Integer limit,String productName){
-        Page<ProductDO> productDOPage=new Page<>();
-        productDOPage.setLimit(limit);
-        productDOPage.setCurrent(page);
-        ProductDO productDO=new ProductDO();
-        productDO.setProductName(productName);
-        Page<ProductDO> pageList=wwqProductService.getAllProduct(productDOPage,productDO);
-        Map<String,Object> result=new HashMap<>();
-        result.put("code",0);
-        result.put("msg","");
-        result.put("count",pageList.getTotal());
-        result.put("data",pageList.getRecords());
-        return result;
-    }
+//    /*****
+//     * 加载商品列表
+//     * @return
+//     */
+//    @ResponseBody
+//    @RequestMapping("listData")
+//    public Map<String,Object> listData(Integer page, Integer limit,String productName){
+//        Page<ProductDO> productDOPage=new Page<>();
+//        productDOPage.setLimit(limit);
+//        productDOPage.setCurrent(page);
+//        ProductDO productDO=new ProductDO();
+//        productDO.setProductName(productName);
+//        Page<ProductDO> pageList=wwqProductService.getAllProduct(productDOPage,productDO);
+//        Map<String,Object> result=new HashMap<>();
+//        result.put("code",0);
+//        result.put("msg","");
+//        result.put("count",pageList.getTotal());
+//        result.put("data",pageList.getRecords());
+//        return result;
+//    }/*****
+//     * 加载商品列表
+//     * @return
+//     */
+//    @ResponseBody
+//    @RequestMapping("listData")
+//    public Map<String,Object> listData(Integer page, Integer limit,String productName){
+//        Page<ProductDO> productDOPage=new Page<>();
+//        productDOPage.setLimit(limit);
+//        productDOPage.setCurrent(page);
+//        ProductDO productDO=new ProductDO();
+//        productDO.setProductName(productName);
+//        Page<ProductDO> pageList=wwqProductService.getAllProduct(productDOPage,productDO);
+//        Map<String,Object> result=new HashMap<>();
+//        result.put("code",0);
+//        result.put("msg","");
+//        result.put("count",pageList.getTotal());
+//        result.put("data",pageList.getRecords());
+//        return result;
+//    }
 
-    @RequestMapping("addProduct")
-    public String productAdd(Model model,String id){
-        ProductAddDO productAddDO=null;
-        if(id==null || "".equals(id)){
-            productAddDO=new ProductAddDO();
-        }else {
-            productAddDO = wwqProductService.getProductById(id);
-        }
-        model.addAttribute("productAddDO",productAddDO);
-        return "product/add";
-    }
+//    @RequestMapping("addProduct")
+//    public String productAdd(Model model,String id){
+//        ProductAddDO productAddDO=null;
+//        if(id==null || "".equals(id)){
+//            productAddDO=new ProductAddDO();
+//        }else {
+//            productAddDO = wwqProductService.getProductById(id);
+//        }
+//        model.addAttribute("productAddDO",productAddDO);
+//        return "product/add";
+//    }
 
     /********
      * 删除商品
@@ -171,21 +190,21 @@ public class WwqProductController {
         return result;
     }
 
-    @ResponseBody
-    @RequestMapping("saveProduct")
-    public Map<String,Object> saveProduct(ProductAddDO productAddDO, HttpServletRequest request){
-        String userId=request.getSession().getAttribute(ConstantUtil.SEESION_USER_ID).toString();
-        String userName=request.getSession().getAttribute(ConstantUtil.SESSION_USER_NAME).toString();
-        Map<String,Object> result=new HashMap<>();
-        try {
-            result=wwqProductService.saveProduct(productAddDO,userId,userName);
-        } catch (Exception e) {
-            e.printStackTrace();
-            result.put("code",0);
-            result.put("msg","操作失败");
-        }
-        return result;
-    }
+//    @ResponseBody
+//    @RequestMapping("saveProduct")
+//    public Map<String,Object> saveProduct(ProductAddDO productAddDO, HttpServletRequest request){
+//        String userId=request.getSession().getAttribute(ConstantUtil.SEESION_USER_ID).toString();
+//        String userName=request.getSession().getAttribute(ConstantUtil.SESSION_USER_NAME).toString();
+//        Map<String,Object> result=new HashMap<>();
+//        try {
+//            result=wwqProductService.saveProduct(productAddDO,userId,userName);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            result.put("code",0);
+//            result.put("msg","操作失败");
+//        }
+//        return result;
+//    }
 
     /**********
      * 跳转至保持图片页面

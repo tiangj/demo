@@ -95,8 +95,8 @@ public class WwqOrderController {
                                        @RequestParam(value="type",required=true)Integer orderStatus,
                                        @RequestParam(value="pageNum",defaultValue="1",required=true) Integer pageNum,
                                        @RequestParam(value="pageSize",defaultValue="10",required=true) Integer pageSize){
-//        String userId = "b66643029bbd4375a3aa338ba5da8114";
-        String userId = authorHelper.getUserId(req);
+        String userId = "b66643029bbd4375a3aa338ba5da8114";
+ //       String userId = authorHelper.getUserId(req);
         if(userId == null){
             return JSONResult.init(301, "success", "user not login");
         }

@@ -1,8 +1,6 @@
 package com.example.wwq.service.impl;
 
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
-import com.example.wwq.DO.ProductAddDO;
+
 import com.example.wwq.DO.ProductDO;
 import com.example.wwq.entity.WwqProduct;
 import com.example.wwq.entity.WwqProductDetail;
@@ -11,6 +9,7 @@ import com.example.wwq.mapper.WwqProductFileMapper;
 import com.example.wwq.mapper.WwqProductMapper;
 import com.example.wwq.service.IWwqProductService;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,7 +58,8 @@ public class WwqProductServiceImpl extends ServiceImpl<WwqProductMapper, WwqProd
     }
 
     @Override
-    public PageInfo<Map<String,Object>> searchShopProductList(String productName,Integer pageNum, Integer pageSize){PageHelper.startPage(pageNum, pageSize);
+    public PageInfo<Map<String,Object>> searchShopProductList(String productName,Integer pageNum, Integer pageSize){
+        PageHelper.startPage(pageNum, pageSize);
         Map<String, Object> example = new HashMap<String, Object>();
         example.put("productName", productName);
         List<Map<String,Object>> list = wwqProductMapper.searchShopProductList(example);
@@ -86,69 +86,69 @@ public class WwqProductServiceImpl extends ServiceImpl<WwqProductMapper, WwqProd
         return shopProductInfo;
     }
 
-    @Override
-    public Page<ProductDO> getAllProduct(Page<ProductDO> page, ProductDO productDO) {
-        page.setRecords(wwqProductMapper.getAllProduct(page,productDO));
-        return page;
-    }
-
-    @Override
-    public ProductAddDO getProductById(String id) {
-        return wwqProductMapper.getProductById(id);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Map<String, Object> saveProduct(ProductAddDO productAddDO,String userId,String userName) throws Exception {
-        Map<String,Object> result=new HashMap<>();
-        try {
-            //商品主表save
-            WwqProduct wwqProduct=new WwqProduct();
-            wwqProduct.setProductName(productAddDO.getProductName());
-            wwqProduct.setProductOrginPrice(productAddDO.getProductOrginPrice());
-            wwqProduct.setProductNowPrice(productAddDO.getProductNowPrice());
-            wwqProduct.setProductNum(productAddDO.getProductNum());
-            wwqProduct.setPostPrice(productAddDO.getPostPrice());
-            wwqProduct.setRecommendBrand(productAddDO.getRecommendBrand());
-            wwqProduct.setSellNum(productAddDO.getSellNum());
-            wwqProduct.setRemainNum(productAddDO.getRemainNum());
-            wwqProduct.setProductDec(productAddDO.getProductDec());
-            wwqProduct.setSort(productAddDO.getSort());
-            wwqProduct.setSortId(productAddDO.getSortId());
-            wwqProduct.setRemark(productAddDO.getRemark());
-            wwqProduct.setUpdateDate(new Date());
-            wwqProduct.setUpdateUser(userId);
-            wwqProduct.setProductType(productAddDO.getProductType());
-            if(productAddDO.getId()==null || "".equals(productAddDO.getId())){
-                wwqProduct.setCreateDate(new Date());
-                wwqProduct.setCreateUser(userId);
-                wwqProductMapper.insert(wwqProduct);
-            }else{
-                wwqProduct.setId(productAddDO.getId());
-                wwqProductMapper.updateById(wwqProduct);
-            }
-            //商品详情表保持
-            WwqProductDetail wwqProductDetail=new WwqProductDetail();
-            wwqProductDetail.setShopProductId(wwqProduct.getId());
-            wwqProductDetail.setPostWayId(productAddDO.getPostWayId()+"");
-            wwqProductDetail.setUpdateDate(new Date());
-            wwqProductDetail.setUpdataUser(userId);
-            if(productAddDO.getDetailId()==null || "".equals(productAddDO.getDetailId())){
-                wwqProductDetail.setCreateDate(new Date());
-                wwqProductDetail.setCreateUser(userId);
-                wwqProductDetailMapper.insert(wwqProductDetail);
-            }else{
-                wwqProductDetail.setId(productAddDO.getDetailId()+"");
-                wwqProductDetailMapper.updateById(wwqProductDetail);
-            }
-            result.put("code",1);
-            result.put("msg","操作成功");
-        }catch (Exception e){
-            e.printStackTrace();
-            result.put("code",1);
-            result.put("msg","操作失败");
-            throw new Exception();
-        }
-        return result;
-    }
+//    @Override
+//    public Page<ProductDO> getAllProduct(Page<ProductDO> page, ProductDO productDO) {
+//        page.setRecords(wwqProductMapper.getAllProduct(page,productDO));
+//        return page;
+//    }
+//
+//    @Override
+//    public ProductAddDO getProductById(String id) {
+//        return wwqProductMapper.getProductById(id);
+//    }
+//
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public Map<String, Object> saveProduct(ProductAddDO productAddDO,String userId,String userName) throws Exception {
+//        Map<String,Object> result=new HashMap<>();
+//        try {
+//            //商品主表save
+//            WwqProduct wwqProduct=new WwqProduct();
+//            wwqProduct.setProductName(productAddDO.getProductName());
+//            wwqProduct.setProductOrginPrice(productAddDO.getProductOrginPrice());
+//            wwqProduct.setProductNowPrice(productAddDO.getProductNowPrice());
+//            wwqProduct.setProductNum(productAddDO.getProductNum());
+//            wwqProduct.setPostPrice(productAddDO.getPostPrice());
+//            wwqProduct.setRecommendBrand(productAddDO.getRecommendBrand());
+//            wwqProduct.setSellNum(productAddDO.getSellNum());
+//            wwqProduct.setRemainNum(productAddDO.getRemainNum());
+//            wwqProduct.setProductDec(productAddDO.getProductDec());
+//            wwqProduct.setSort(productAddDO.getSort());
+//            wwqProduct.setSortId(productAddDO.getSortId());
+//            wwqProduct.setRemark(productAddDO.getRemark());
+//            wwqProduct.setUpdateDate(new Date());
+//            wwqProduct.setUpdateUser(userId);
+//            wwqProduct.setProductType(productAddDO.getProductType());
+//            if(productAddDO.getId()==null || "".equals(productAddDO.getId())){
+//                wwqProduct.setCreateDate(new Date());
+//                wwqProduct.setCreateUser(userId);
+//                wwqProductMapper.insert(wwqProduct);
+//            }else{
+//                wwqProduct.setId(productAddDO.getId());
+//                wwqProductMapper.updateById(wwqProduct);
+//            }
+//            //商品详情表保持
+//            WwqProductDetail wwqProductDetail=new WwqProductDetail();
+//            wwqProductDetail.setShopProductId(wwqProduct.getId());
+//            wwqProductDetail.setPostWayId(productAddDO.getPostWayId()+"");
+//            wwqProductDetail.setUpdateDate(new Date());
+//            wwqProductDetail.setUpdataUser(userId);
+//            if(productAddDO.getDetailId()==null || "".equals(productAddDO.getDetailId())){
+//                wwqProductDetail.setCreateDate(new Date());
+//                wwqProductDetail.setCreateUser(userId);
+//                wwqProductDetailMapper.insert(wwqProductDetail);
+//            }else{
+//                wwqProductDetail.setId(productAddDO.getDetailId()+"");
+//                wwqProductDetailMapper.updateById(wwqProductDetail);
+//            }
+//            result.put("code",1);
+//            result.put("msg","操作成功");
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            result.put("code",1);
+//            result.put("msg","操作失败");
+//            throw new Exception();
+//        }
+//        return result;
+//    }
 }

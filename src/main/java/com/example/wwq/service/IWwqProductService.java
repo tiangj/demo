@@ -28,9 +28,9 @@ public interface IWwqProductService extends IService<WwqProduct> {
 
     Map<String, Object> shopProductListInfo(String id);
 
-    Page<ProductDO> getAllProduct(Page<ProductDO> page, ProductDO productDO);
+    //Page<ProductDO> getAllProduct(Page<ProductDO> page, ProductDO productDO);
 
-    ProductAddDO getProductById(String id);
+    //ProductAddDO getProductById(String id);
 
-    Map<String,Object> saveProduct(ProductAddDO productAddDO,String userId,String userName) throws Exception;
+   // Map<String,Object> saveProduct(ProductAddDO productAddDO,String userId,String userName) throws Exception;
 }

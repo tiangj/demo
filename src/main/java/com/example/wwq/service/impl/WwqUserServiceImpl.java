@@ -39,6 +39,10 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
     @Value("${file.staticAccessPath}")
     private String staticAccessPath;
 
+
+    @Value("${base.uploadFile.server}")
+    private String uploadFile;
+
     @Override
     public Map<String, Object> saveUserInfo(JSONObject userInfo) {
         /**
@@ -128,7 +132,7 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
             shopUser.setPhone(phone);
             shopUser.setId(userId);
             String filePath = staticAccessPath+"/"+userId+".jpg";
-            String wxCode = WechatKit.productWxCodeUtil(userId,filePath);
+            String wxCode = uploadFile+WechatKit.productWxCodeUtil(userId,filePath);
             shopUser.setWxCode(wxCode);
             wwqUserMapper.updateById(shopUser);
             //判断是否有分销记录
