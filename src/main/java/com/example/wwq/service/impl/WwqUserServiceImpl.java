@@ -7,6 +7,8 @@ import com.example.wwq.mapper.WwqUserMapper;
 import com.example.wwq.service.IWwqUserService;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.example.wwq.wx.Util.WechatKit;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -194,5 +196,13 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
             }
         }
         return  map;
+    }
+
+    @Override
+    public PageInfo<Map<String, Object>> userConcatList(String userId, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Map<String,Object>> retList = wwqShareCountMapper.userConcatList(userId);
+        PageInfo<Map<String,Object>> pageList = new PageInfo<Map<String,Object>>(retList);
+        return pageList;
     }
 }

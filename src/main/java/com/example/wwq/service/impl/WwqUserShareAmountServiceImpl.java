@@ -4,7 +4,12 @@ import com.example.wwq.entity.WwqUserShareAmount;
 import com.example.wwq.mapper.WwqUserShareAmountMapper;
 import com.example.wwq.service.IWwqUserShareAmountService;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -17,4 +22,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class WwqUserShareAmountServiceImpl extends ServiceImpl<WwqUserShareAmountMapper, WwqUserShareAmount> implements IWwqUserShareAmountService {
 
+    @Autowired
+    private WwqUserShareAmountMapper wwqUserShareAmountMapper;
+
+    @Override
+    public Map<String, Object> userShareCountAmount(String userId) {
+        Map<String,Object> retList = wwqUserShareAmountMapper.userShareCountAmount(userId);
+        return retList;
+    }
 }

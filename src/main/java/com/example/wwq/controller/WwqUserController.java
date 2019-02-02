@@ -6,6 +6,8 @@ import com.aliyuncs.exceptions.ClientException;
 import com.example.wwq.entity.WwqUser;
 import com.example.wwq.kit.*;
 import com.example.wwq.service.IWwqUserService;
+import com.example.wwq.service.IWwqUserShareAmountService;
+import com.github.pagehelper.PageInfo;
 import org.apache.http.client.ClientProtocolException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +48,9 @@ public class WwqUserController {
 
         @Autowired
         private SMSKit smsKit;
+
+        @Autowired
+        private IWwqUserShareAmountService wwqUserShareAmountService;
 
 
         /**
@@ -275,6 +280,49 @@ public class WwqUserController {
         return JSONResult.init(200, "success",user);
     }
 
+
+    /**
+     * 用户扫码关注列表
+     * @param req
+     * @return
+     */
+    @RequestMapping(value="/userConcatList",produces="text/html;charset=UTF-8")
+    @ResponseBody
+    public String userConcatList(HttpServletRequest req, Integer pageNum, Integer pageSize){
+//        String userId = authorHelper.getUserId(req);
+//        if(userId == null){
+//           return JSONResult.init(301,"用户未登录");
+//        }
+        String userId = "2df0802ede2444bbb939e3691be66a43";
+        PageInfo<Map<String, Object>> retList = wwqUserService.userConcatList(userId, pageNum, pageSize);
+        if(retList == null || retList.getList().size()<1){
+            return JSONResult.init(500,"数据为空");
+        }else{
+            return JSONResult.init(200,"success",retList);
+        }
+    }
+
+
+    /**
+     * 用户分销总额
+     * @param req
+     * @return
+     */
+    @RequestMapping(value="/userShareCountAmount",produces="text/html;charset=UTF-8")
+    @ResponseBody
+    public String userShareCountAmount(HttpServletRequest req){
+        String userId = "9c63c2d6c2cc4db1bff2287346c0092d";
+//        String userId = authorHelper.getUserId(req);
+//        if(userId == null){
+//            return JSONResult.init(301,"用户未登录！");
+//        }
+        Map<String,Object> map = wwqUserShareAmountService.userShareCountAmount(userId);
+        if(map == null || map.size()<1) {
+            return JSONResult.init(500, "当前用户不存在！");
+        }else{
+            return JSONResult.init(200,"success",map);
+        }
+    }
 
 }
 
