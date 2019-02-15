@@ -289,11 +289,11 @@ public class WwqUserController {
     @RequestMapping(value="/userConcatList",produces="text/html;charset=UTF-8")
     @ResponseBody
     public String userConcatList(HttpServletRequest req, Integer pageNum, Integer pageSize){
-//        String userId = authorHelper.getUserId(req);
-//        if(userId == null){
-//           return JSONResult.init(301,"用户未登录");
-//        }
-        String userId = "2df0802ede2444bbb939e3691be66a43";
+        String userId = authorHelper.getUserId(req);
+        if(userId == null){
+           return JSONResult.init(301,"用户未登录");
+        }
+//        String userId = "2df0802ede2444bbb939e3691be66a43";
         PageInfo<Map<String, Object>> retList = wwqUserService.userConcatList(userId, pageNum, pageSize);
         if(retList == null || retList.getList().size()<1){
             return JSONResult.init(500,"数据为空");
@@ -311,11 +311,11 @@ public class WwqUserController {
     @RequestMapping(value="/userShareCountAmount",produces="text/html;charset=UTF-8")
     @ResponseBody
     public String userShareCountAmount(HttpServletRequest req){
-        String userId = "9c63c2d6c2cc4db1bff2287346c0092d";
-//        String userId = authorHelper.getUserId(req);
-//        if(userId == null){
-//            return JSONResult.init(301,"用户未登录！");
-//        }
+//        String userId = "9c63c2d6c2cc4db1bff2287346c0092d";
+        String userId = authorHelper.getUserId(req);
+        if(userId == null){
+            return JSONResult.init(301,"用户未登录！");
+        }
         Map<String,Object> map = wwqUserShareAmountService.userShareCountAmount(userId);
         if(map == null || map.size()<1) {
             return JSONResult.init(500, "当前用户不存在！");
@@ -323,6 +323,8 @@ public class WwqUserController {
             return JSONResult.init(200,"success",map);
         }
     }
+
+
 
 }
 
