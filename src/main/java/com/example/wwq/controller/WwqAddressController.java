@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -91,14 +92,12 @@ public class WwqAddressController {
     @ResponseBody
     public String getCityCodeList(
             HttpServletRequest req,
-            @RequestParam(value = "id", required = true) String id,
-            @RequestParam(value = "pageNum", defaultValue = "1", required = true) Integer pageNum,
-            @RequestParam(value = "pageSize", defaultValue = "10", required = true) Integer pageSize) {
+            @RequestParam(value = "id", required = true) String id) {
         String userId = authorHelper.getUserId(req);
         if (userId == null) {
             return JSONResult.init(301, "success", "user not login");
         }
-        PageInfo<Map<String, Object>> pageCityCode = wwqAddressService.getCityCodeList(id, pageNum, pageSize);
+        List<Map<String, Object>> pageCityCode = wwqAddressService.getCityCodeList(id);
         return JSONResult.init(200, "success", pageCityCode);
     }
 
