@@ -133,8 +133,8 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
             WwqUser shopUser = new WwqUser();
             shopUser.setPhone(phone);
             shopUser.setId(userId);
-            String filePath = staticAccessPath+"/"+userId+".jpg";
-            String wxCode = uploadFile+WechatKit.productWxCodeUtil(userId,filePath);
+            String filePath = uploadFile+userId+".jpg";
+            String wxCode = WechatKit.productWxCodeUtil(userId,filePath);
             shopUser.setWxCode(wxCode);
             wwqUserMapper.updateById(shopUser);
             //判断是否有分销记录
