@@ -95,8 +95,8 @@ public class WwqOrderController {
                                        @RequestParam(value="type",required=true)Integer orderStatus,
                                        @RequestParam(value="pageNum",defaultValue="1",required=true) Integer pageNum,
                                        @RequestParam(value="pageSize",defaultValue="10",required=true) Integer pageSize){
-        String userId = "b66643029bbd4375a3aa338ba5da8114";
- //       String userId = authorHelper.getUserId(req);
+//        String userId = "b66643029bbd4375a3aa338ba5da8114";
+        String userId = authorHelper.getUserId(req);
         if(userId == null){
             return JSONResult.init(301, "success", "user not login");
         }
@@ -132,11 +132,11 @@ public class WwqOrderController {
     @ResponseBody
     public String shopProductOrderDetail(HttpServletRequest req,@RequestParam(value="orderId",required=true)String orderId,
                                          @RequestParam(value="orderStatus",required=true)Integer orderStatus){
-        String userId = "b66643029bbd4375a3aa338ba5da8114";
-//        String userId = authorHelper.getUserId(req);
-//        if(userId == null){
-//            return JSONResult.init(301, "success", "user not login");
-//        }
+//        String userId = "b66643029bbd4375a3aa338ba5da8114";
+        String userId = authorHelper.getUserId(req);
+        if(userId == null){
+            return JSONResult.init(301, "success", "user not login");
+        }
         List<Map<String,Object>> shopProduct = wwqOrderService.shopProductOrderDetail(userId,orderId,orderStatus);
         if(shopProduct != null && shopProduct.size() > 0) {
             return JSONResult.init(200, "success", shopProduct);

@@ -20,4 +20,13 @@
         id, user_id AS userId, parent_id AS parentId, remark, create_date AS createDate, create_user AS createUser, update_date AS updateDate, update_user AS updateUser, delete_flag AS deleteFlag
     </sql>
 
+
+    <select id="userConcatList" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT
+            u.`nickname`,
+            u.`headimgurl`
+            FROM `wwq_share_user_concart` as ws
+            LEFT JOIN `wwq_user` as u on ws.`parent_id`= u.`open_id` and u.`delete_flag` = 0
+            where ws.`user_id` = #{userId} and ws.`delete_flag` = 0
+    </select>
 </mapper>

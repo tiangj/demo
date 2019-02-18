@@ -4,6 +4,7 @@ import com.example.wwq.entity.WwqAddress;
 import com.baomidou.mybatisplus.service.IService;
 import com.github.pagehelper.PageInfo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,7 +22,7 @@ public interface IWwqAddressService extends IService<WwqAddress> {
 
     Map<String, Object> selectListColumnsByInterface(String userId, Integer pageNum, Integer pageSize);
 
-    PageInfo<Map<String, Object>> getCityCodeList(String id, Integer pageNum, Integer pageSize);
+    List<Map<String, Object>> getCityCodeList(String id);
 
     boolean updateDefaultAddress(String addressId,Integer defaultAddress);
 

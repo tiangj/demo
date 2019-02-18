@@ -55,11 +55,10 @@ public class WwqScoreMallController {
     @RequestMapping("/exchangeScoreMallProduct")
     @ResponseBody
     public String exchangeScoreMallProduct(HttpServletRequest req, String id){
-        String userId = "1";
-//        String userId = authorHelper.getUserId(req);
-//        if(userId == null){
-//            return JSONResult.init(301, "success", "user not login");
-//        }
+        String userId = authorHelper.getUserId(req);
+        if(userId == null){
+            return JSONResult.init(301, "success", "user not login");
+        }
         Boolean b = wwqScoreMallService.exchangeScoreMallProduct(userId,id);
         if(b){
             return JSONResult.init(200, "success", b);

@@ -137,7 +137,7 @@
           SELECT wpw.`id` ,wpw.`post_way_name`  FROM `wwq_post_way` as wpw WHERE wpw.`delete_flag`  = 0
     </select>
 
-    <select id="selectDefaultAddress" resultType="java.lang.String" parameterType="java.util.Map">
+    <select id="selectDefaultAddress" parameterType="java.lang.String" resultType="com.example.wwq.entity.WwqAddress">
         select * from wwq_address as sa WHERE sa.default_address = 1 and sa.delete_flag = 0 AND sa.user_id = #{userId}
     </select>
 

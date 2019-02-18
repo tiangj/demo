@@ -71,13 +71,12 @@ public class WwqAddressServiceImpl extends ServiceImpl<WwqAddressMapper, WwqAddr
     }
 
     @Override
-    public PageInfo<Map<String, Object>> getCityCodeList(String id,Integer pageNum,Integer pageSize) {
-        PageHelper.startPage(pageNum, pageSize);
+    public List<Map<String, Object>> getCityCodeList(String id) {
         Map<String,Object> example = new HashMap<>();
         example.put("id", id);
         List<Map<String, Object>> cityCodeList = wwqAddressMapper.getCityCodeList(example);
-        PageInfo<Map<String,Object>> pageAddress = new PageInfo<Map<String,Object>>(cityCodeList);
-        return pageAddress;
+        //PageInfo<Map<String,Object>> pageAddress = new PageInfo<Map<String,Object>>(cityCodeList);
+        return cityCodeList;
     }
 
 
