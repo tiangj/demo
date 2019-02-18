@@ -220,6 +220,7 @@ public class WwqUserController {
         }
         //保存手机号到数据库以及微信永久二维码
         boolean b = wwqUserService.updateUserPhone(phone, userId);
+
         if(b){
             //获取用户信息
            Map<String,Object> retList = wwqUserService.selectUserInfo1(userId);
