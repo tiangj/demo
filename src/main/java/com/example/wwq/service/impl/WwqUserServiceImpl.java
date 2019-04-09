@@ -1,9 +1,13 @@
 package com.example.wwq.service.impl;
 
+import com.example.wwq.entity.WwqRegisterOffer;
 import com.example.wwq.entity.WwqShareCount;
 import com.example.wwq.entity.WwqUser;
+import com.example.wwq.entity.WwqUserScore;
+import com.example.wwq.mapper.WwqRegisterOfferMapper;
 import com.example.wwq.mapper.WwqShareCountMapper;
 import com.example.wwq.mapper.WwqUserMapper;
+import com.example.wwq.mapper.WwqUserScoreMapper;
 import com.example.wwq.service.IWwqUserService;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.example.wwq.wx.Util.WechatKit;
@@ -34,6 +38,12 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
 
     @Autowired
     private WwqShareCountMapper wwqShareCountMapper;
+
+    @Autowired
+    private WwqRegisterOfferMapper wwqRegisterOfferMapper;
+
+    @Autowired
+    private WwqUserScoreMapper wwqUserScoreMapper;
 
     @Value("${upload.file.path}")
     private String uploadFolder;
@@ -156,6 +166,38 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
                 wwqShareCount.setUpdateDate(new Date());
                 wwqShareCount.setUpdateUser(userId);
                 wwqShareCountMapper.insert(wwqShareCount);
+            }
+            //查询用户是否已有分销政策
+            Map<String,Object> map = new HashMap<>();
+            map.put("userId",userId);
+            List<WwqRegisterOffer> wwqRegisterOfferList = wwqRegisterOfferMapper.selectByMap(map);
+            if(wwqRegisterOfferList == null && wwqRegisterOfferList.size()<1){
+                WwqRegisterOffer wwqRegisterOffer = new WwqRegisterOffer();
+                wwqRegisterOffer.setCreateDate(new Date());
+                wwqRegisterOffer.setCreateUser(userId);
+                wwqRegisterOffer.setDeleteFlag(0);
+                wwqRegisterOffer.setOffer("恭喜您获得免费体验机器人健康检测一次！");
+                wwqRegisterOffer.setStatus(100);
+                wwqRegisterOffer.setUpdateDate(new Date());
+                wwqRegisterOffer.setUpdateUser(userId);
+                wwqRegisterOffer.setUserId(userId);
+                wwqRegisterOfferMapper.insert(wwqRegisterOffer);
+                Map<String,Object> map1 = new HashMap<>();
+                map1.put("userId",userId);
+                List<WwqUserScore> wwqUserScoreList = wwqUserScoreMapper.selectByMap(map1);
+                if(wwqUserScoreList == null && wwqUserScoreList.size() < 1){
+                    WwqUserScore wwqUserScore = new WwqUserScore();
+                    wwqUserScore.setScore(500);
+                    wwqUserScore.setId(wwqUserScoreList.get(0).getId());
+                    wwqUserScore.setUpdateDate(new Date());
+                    wwqUserScore.setUpdateUser(userId);
+                    wwqUserScore.setUserId(userId);
+                    wwqUserScore.setConsumeScore(0);
+                    wwqUserScore.setCreateDate(new Date());
+                    wwqUserScore.setCreateUser(userId);
+                    wwqUserScore.setDeleteFlag(0);
+                    wwqUserScoreMapper.insert(wwqUserScore);
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
