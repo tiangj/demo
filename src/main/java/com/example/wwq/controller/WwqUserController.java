@@ -6,6 +6,7 @@ import com.aliyuncs.exceptions.ClientException;
 import com.example.wwq.entity.WwqUser;
 import com.example.wwq.kit.*;
 import com.example.wwq.service.IWwqUserService;
+import com.example.wwq.service.IWwqUserShareAmountDetailService;
 import com.example.wwq.service.IWwqUserShareAmountService;
 import com.github.pagehelper.PageInfo;
 import org.apache.http.client.ClientProtocolException;
@@ -51,6 +52,9 @@ public class WwqUserController {
 
         @Autowired
         private IWwqUserShareAmountService wwqUserShareAmountService;
+
+        @Autowired
+        private IWwqUserShareAmountDetailService wwqUserShareAmountDetailService;
 
 
         /**
@@ -312,7 +316,7 @@ public class WwqUserController {
     @RequestMapping(value="/userShareCountAmount",produces="text/html;charset=UTF-8")
     @ResponseBody
     public String userShareCountAmount(HttpServletRequest req){
-//        String userId = "9c63c2d6c2cc4db1bff2287346c0092d";
+        //String userId = "0915364a8b014a7da90e37fca8fec225";
         String userId = authorHelper.getUserId(req);
         if(userId == null){
             return JSONResult.init(301,"用户未登录！");
@@ -325,7 +329,28 @@ public class WwqUserController {
         }
     }
 
-
+    /**
+     * 用户分销佣金明细，包含提现明细
+     * @param req
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value="/userShareCountAmountDetail",produces="text/html;charset=UTF-8")
+    @ResponseBody
+    public String userShareCountAmountDetail(HttpServletRequest req, Integer pageNum, Integer pageSize){
+        //String userId = "9c63c2d6c2cc4db1bff2287346c0092d";
+        String userId = authorHelper.getUserId(req);
+        if(userId == null){
+            return JSONResult.init(301,"用户未登录！");
+        }
+        PageInfo<Map<String,Object>> pageInfo = wwqUserShareAmountDetailService.userShareCountAmountDetail(userId,pageNum,pageSize);
+        if(pageInfo == null || pageInfo.getList().size()<1){
+            return JSONResult.init(500,"数据为空");
+        }else{
+            return JSONResult.init(200,"success",pageInfo);
+        }
+    }
 
 }
 
