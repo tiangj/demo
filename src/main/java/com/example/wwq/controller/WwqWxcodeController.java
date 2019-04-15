@@ -24,13 +24,6 @@ public class WwqWxcodeController {
     @Autowired
     private IWwqShareUserConcartService wwqShareUserConcartService;
 
-    @RequestMapping(value="/test")
-    public ModelAndView test(){
-        ModelAndView model = new ModelAndView();
-        model.addObject("echostr","1111111");
-        model.setViewName("wxCodecallBack");
-        return model;
-    }
 
 
     @RequestMapping(value="/verification")
@@ -52,18 +45,24 @@ public class WwqWxcodeController {
             PrintWriter out = response.getWriter();
             out.print(echostr);
             out.close();
-            out = null;
+            //out = null;
         }else {
             // 将请求、响应的编码均设置为UTF-8（防止中文乱码）
             request.setCharacterEncoding("UTF-8");
             response.setCharacterEncoding("UTF-8");
             // 调用核心业务类接收消息、处理消息
             String respMessage = this.processRequest(request);
+            System.out.println(respMessage);
+            System.out.println("51");
             //响应消息
             PrintWriter out = response.getWriter();
+            System.out.println("51");
             out.print(respMessage);
+            System.out.println("52");
             out.flush();
+            System.out.println("53");
             out.close();
+            System.out.println("54");
         }
         return null;
     }
@@ -87,30 +86,47 @@ public class WwqWxcodeController {
             String msgType = requestMap.get("MsgType");
             //微信服务器post过来的内容
             String weixinContent = requestMap.get("Content");
+
             //事件KEY值，qrscene_为前缀，后面为二维码的参数值
             String eventKey = requestMap.get("EventKey");
             String userId = eventKey.substring(eventKey.lastIndexOf('_')+1);
             System.out.println("------------》》》》》》》userId-------------->"+userId);
             //二维码的ticket，可用来换取二维码图片
             String ticket = requestMap.get("Ticket");
+            System.out.println("------------》》》》》》》Ticket-------------->"+ticket);
             //事件类型，SCAN
             String event = requestMap.get("Event");
+            TextMessage textMessage = new TextMessage();
+            textMessage.setToUserName(toUserName);
+            textMessage.setFromUserName(fromUserName);
+            textMessage.setContent(weixinContent);
+            textMessage.setEvent(event);
+            textMessage.setEventKey(eventKey);
+            textMessage.setTicket(ticket);
+            textMessage.setCreateTime(new Date().getTime());
+            System.out.println("1");
             if (event.equals("subscribe")) {
+                System.out.println("2");
                 if(userId != null && fromUserName != null){
+                    System.out.println("3");
                     WwqShareUserConcart wwqShareUserConcart = new WwqShareUserConcart();
-                    wwqShareUserConcart.setUserId(userId);
-                    wwqShareUserConcart.setParentId(fromUserName);
+                    wwqShareUserConcart.setUserId(fromUserName);
+                    wwqShareUserConcart.setParentId(userId);
                     wwqShareUserConcart.setDeleteFlag(0);
                     wwqShareUserConcart.setCreateDate(new Date());
                     wwqShareUserConcart.setCreateUser(userId);
                     wwqShareUserConcart.setUpdateDate(new Date());
                     wwqShareUserConcart.setUpdateUser(userId);
                     wwqShareUserConcartService.createShareUserConcart(wwqShareUserConcart);
+                    System.out.println("4");
                 }
             }else if(event.equals("unsubscribe")){
-
+                System.out.println("5");
                 return event;
             }
+            textMessage.setContent("谢谢您的关注");
+            respMessage = MessageUtil.textMessageToXml(textMessage).replace(" ","");
+            System.out.println("6");
         } catch (Exception e) {
             e.printStackTrace();
         }

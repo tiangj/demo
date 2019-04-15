@@ -17,6 +17,7 @@ public class WeiXinMenuTest {
             System.out.println("json："+json);
             //第二步
             String ticket_url = json.getString("access_token");
+            System.out.println(ticket_url);
             String menu = JSONObject.fromObject(Menu.initMenu()).toString();
             boolean result = MenuKit.createMenu(ticket_url, menu);
             if(result){
