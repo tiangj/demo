@@ -110,8 +110,8 @@ public class WwqWxcodeController {
                 if(userId != null && fromUserName != null){
                     System.out.println("3");
                     WwqShareUserConcart wwqShareUserConcart = new WwqShareUserConcart();
-                    wwqShareUserConcart.setUserId(fromUserName);
-                    wwqShareUserConcart.setParentId(userId);
+                    wwqShareUserConcart.setUserId(userId);
+                    wwqShareUserConcart.setParentId(fromUserName);
                     wwqShareUserConcart.setDeleteFlag(0);
                     wwqShareUserConcart.setCreateDate(new Date());
                     wwqShareUserConcart.setCreateUser(userId);
