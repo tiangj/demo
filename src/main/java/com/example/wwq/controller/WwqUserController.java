@@ -9,6 +9,7 @@ import com.example.wwq.service.IWwqUserService;
 import com.example.wwq.service.IWwqUserShareAmountDetailService;
 import com.example.wwq.service.IWwqUserShareAmountService;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -72,6 +73,8 @@ public class WwqUserController {
              * 1、获取返回的回调地址
              * 2、http://636.hnguwei.com是当前的外网地址
              * */
+            //授权之前判断用户是否已经授过权，然后是否完善手机号码，
+            // 如果授权但未完善手机号，跳转完善手机号界面，如果未授权，直接拉取授权
             String returnURl = "http://admin.wanwuquanhn.com/demo/wwqUser/wxCallBack";
             //第一步：用户同意授权，获取code
             String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + WeCahtUtils.APPID
@@ -101,44 +104,81 @@ public class WwqUserController {
             System.out.println("code:"+code);
             boolean b = wxLoginHelper.getCode(code);
             if(b){
+                //已授权的情况
                 String userInfo = wxLoginHelper.getUserInfo(code).toString();
                 System.out.println("userInfo:----------->"+userInfo);
                 JSONObject jsonObject = JSONObject.fromObject(userInfo);
                 access_token = jsonObject.getString("access_token");
                 openid = jsonObject.getString("openid");
+                //根据openId获取用户手机号
+                List<Map<String,Object>> userInfoList = wwqUserService.selectUserInfo(openid);
+                if(userInfoList == null || userInfoList.size() < 1){
+                    System.out.println("1");
+                    resp.sendRedirect("http://www.wanwuquanhn.com/login");
+                }else if(StringUtils.isBlank(userInfoList.get(0).get("phone").toString())){
+                    System.out.println("2");
+                    List<Map<String, Object>> userList = (List<Map<String, Object>>) userInfoList.get(0).get("userList1");
+                    String userToken = authorHelper.setSession(userList.get(0));
+                    resp.sendRedirect("http://www.wanwuquanhn.com/?token="+userToken);
+                }
             }else{
+                //未授权的情况
                 // 请求方法 和参数
+                System.out.println("q");
                 String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="
                         + WeCahtUtils.APPID + "&secret=" + WeCahtUtils.APPSECRET
                         + "&code=" + code + "&grant_type=authorization_code";
+                System.out.println("q");
                 JSONObject jsonObject = WeCahtUtils.getJSONObject(url);
+                System.out.println("q");
                 wxLoginHelper.setUserInfo(code, jsonObject.toString());
+                System.out.println("q");
                 access_token = jsonObject.getString("access_token");
+                System.out.println("q");
                 openid = jsonObject.getString("openid");
+                System.out.println("q");
             }
-            // 4 第四步：拉取用户信息(需scope为 snsapi_userinfo)
-            String returnUrl = "https://api.weixin.qq.com/sns/userinfo?access_token="
-                    + access_token + "&openid=" + openid + "&lang=zh_CN";
-            JSONObject userInfo = WeCahtUtils.getJSONObject(returnUrl);
-            Map<String, Object> retMap = wwqUserService.saveUserInfo(userInfo);
-            System.out.println("retMap =====" +userInfo);
-            //控制页面跳转
-            if (retMap == null || retMap.size() < 1) {
-                resp.sendRedirect("http://www.wanwuquanhn.com/login");
-            } else {
-                if(Integer.parseInt(retMap.get("code").toString()) == 200){
-                    List<Map<String, Object>> userList = (List<Map<String, Object>>) retMap.get("userList1");
-                    String userToken = authorHelper.setSession(userList.get(0));
-                    resp.sendRedirect("http://www.wanwuquanhn.com/?token="+userToken);
-                }else{
-                    // 得到用户id
-                    @SuppressWarnings("unchecked")
-                    List<Map<String, Object>> userList = (List<Map<String, Object>>) retMap.get("userList1");
-                    // 生成token
-                    String token = authorHelper.setSession(userList.get(0));
-                    resp.sendRedirect("http://www.wanwuquanhn.com/login?token="+token);
+            //根据openId获取用户手机号
+            List<Map<String,Object>> userInfoList = wwqUserService.selectUserInfo(openid);
+            System.out.println("q1");
+            if(userInfoList == null || userInfoList.size() < 1){
+                // 4 第四步：拉取用户信息(需scope为 snsapi_userinfo)
+                System.out.println("q2");
+                String returnUrl = "https://api.weixin.qq.com/sns/userinfo?access_token="
+                        + access_token + "&openid=" + openid + "&lang=zh_CN";
+                System.out.println("q3");
+                JSONObject userInfo = WeCahtUtils.getJSONObject(returnUrl);
+                System.out.println("q4");
+                Map<String, Object> retMap = wwqUserService.saveUserInfo(userInfo);
+                System.out.println("q5");
+                System.out.println("retMap =====" +userInfo);
+                //控制页面跳转
+                if (retMap == null || retMap.size() < 1) {
+                    resp.sendRedirect("http://www.wanwuquanhn.com/login");
+                } else {
+                    if(Integer.parseInt(retMap.get("code").toString()) == 200){
+                        List<Map<String, Object>> userList = (List<Map<String, Object>>) retMap.get("userList1");
+                        String userToken = authorHelper.setSession(userList.get(0));
+                        resp.sendRedirect("http://www.wanwuquanhn.com/?token="+userToken);
+                    }else{
+                        // 得到用户id
+                        @SuppressWarnings("unchecked")
+                        List<Map<String, Object>> userList = (List<Map<String, Object>>) retMap.get("userList1");
+                        // 生成token
+                        String token = authorHelper.setSession(userList.get(0));
+                        resp.sendRedirect("http://www.wanwuquanhn.com/login?token="+token);
+                    }
                 }
+            }else if(!StringUtils.isBlank(userInfoList.get(0).get("phone").toString())){
+                System.out.println("2");
+                List<Map<String, Object>> userList = (List<Map<String, Object>>) userInfoList.get(0).get("userList1");
+                String userToken = authorHelper.setSession(userList.get(0));
+                resp.sendRedirect("http://www.wanwuquanhn.com/?token="+userToken);
+            }else{
+                System.out.println("3");
+                resp.sendRedirect("http://www.wanwuquanhn.com/login");
             }
+
         }
 
 
