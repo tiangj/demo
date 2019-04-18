@@ -211,38 +211,38 @@ public class WwqPayServiceImpl extends ServiceImpl<WwqPayMapper, WwqPay> impleme
                 wwqOrderScoreMapper.insert(wwqOrderScore);
             }
         }
-        //分销返利
-        //查找当前下单用户是否存在上级
-        //如果有上级，则上级直接拿3%的佣金
-        Map<String,Object> map = new HashMap<>();
-        map.put("user_id",wwqPay.getUserId());
-        map.put("delete_flag",0);
-        List<WwqShareUserConcart> list = wwqShareUserConcartMapper.selectByMap(map);
-        if(list == null || list.size()<1){
-            return true;
-        }
-        BigDecimal shareAmount = new BigDecimal(wwqPay.getTotalPrice()).multiply(new BigDecimal(0.3));
-        this.updateUserShareAmountConcart(list.get(0).getParentId(),shareAmount);
-        //查询当前用户的上级是否存在上级
-        Map<String,Object> map1 = new HashMap<>();
-        map1.put("user_id",list.get(0).getParentId());
-        map1.put("delete_flag",0);
-        List<WwqShareUserConcart> list1 = wwqShareUserConcartMapper.selectByMap(map1);
-        if(list1 == null || list1.size()<1){
-            return true;
-        }
-        //如果存在，判断上级的上级是否有12个直接下级，以及所有一二级下级是否有120个人
-        Map<String,Object> map2 = new HashMap<>();
-        map2.put("user_id",list1.get(0).getParentId());
-        map2.put("delete_flag",0);
-        List<WwqShareCount> list2 = wwqShareCountMapper.selectByMap(map2);
-        if(list2 == null || list2.size()<1){
-            return true;
-        }
-        //如果符合这个条件，则上级的上级也拿走3%
-        if(list2.get(0).getFirstShareNum() > 12 && list2.get(0).getSecondShareNum() > 120){
-            this.updateUserShareAmountConcart(list1.get(0).getParentId(),shareAmount);
-        }
+//        //分销返利
+//        //查找当前下单用户是否存在上级
+//        //如果有上级，则上级直接拿3%的佣金
+//        Map<String,Object> map = new HashMap<>();
+//        map.put("user_id",wwqPay.getUserId());
+//        map.put("delete_flag",0);
+//        List<WwqShareUserConcart> list = wwqShareUserConcartMapper.selectByMap(map);
+//        if(list == null || list.size()<1){
+//            return true;
+//        }
+//        BigDecimal shareAmount = new BigDecimal(wwqPay.getTotalPrice()).multiply(new BigDecimal(0.3));
+//        this.updateUserShareAmountConcart(list.get(0).getParentId(),shareAmount);
+//        //查询当前用户的上级是否存在上级
+//        Map<String,Object> map1 = new HashMap<>();
+//        map1.put("user_id",list.get(0).getParentId());
+//        map1.put("delete_flag",0);
+//        List<WwqShareUserConcart> list1 = wwqShareUserConcartMapper.selectByMap(map1);
+//        if(list1 == null || list1.size()<1){
+//            return true;
+//        }
+//        //如果存在，判断上级的上级是否有12个直接下级，以及所有一二级下级是否有120个人
+//        Map<String,Object> map2 = new HashMap<>();
+//        map2.put("user_id",list1.get(0).getParentId());
+//        map2.put("delete_flag",0);
+//        List<WwqShareCount> list2 = wwqShareCountMapper.selectByMap(map2);
+//        if(list2 == null || list2.size()<1){
+//            return true;
+//        }
+//        //如果符合这个条件，则上级的上级也拿走3%
+//        if(list2.get(0).getFirstShareNum() > 12 && list2.get(0).getSecondShareNum() > 120){
+//            this.updateUserShareAmountConcart(list1.get(0).getParentId(),shareAmount);
+//        }
         return true;
     }
 

@@ -28,7 +28,7 @@
             u.`headimgurl`
         FROM `wwq_share_user_concart` as ws
         LEFT JOIN `wwq_user` as u on ws.`user_id`= u.`open_id` and u.`delete_flag` = 0
-        where ws.`delete_flag` = 0 and ws.`parent_id` = #{userId}
+        where ws.`delete_flag` = 0 and ws.`user_id` = #{userId}
     </select>
 
 </mapper>
