@@ -225,6 +225,9 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
         shareCount1.setUserId(userId);
         WwqShareCount shareCount = wwqShareCountMapper.selectOne(shareCount1);
         System.out.println("shareCount:"+shareCount);
+        if(user == null){
+            return map;
+        }
         map.put("id",user.getId());
         map.put("nickname",user.getNickname());
         map.put("headimgurl",user.getHeadimgurl());
