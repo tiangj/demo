@@ -325,7 +325,7 @@ public class WwqUserController {
             return JSONResult.init(301, "用户未登录!");
         }
         Map<String,Object> user = wwqUserService.selectUserInfo1(userId);
-        if(user == null){
+        if(user == null || user.size()==0){
             return JSONResult.init(301, "用户未登录！");
         }
         return JSONResult.init(200, "success",user);
