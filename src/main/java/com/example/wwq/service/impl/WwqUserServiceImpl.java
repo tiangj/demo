@@ -225,21 +225,20 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
         shareCount1.setUserId(userId);
         WwqShareCount shareCount = wwqShareCountMapper.selectOne(shareCount1);
         System.out.println("shareCount:"+shareCount);
-        if(user == null){
-            return map;
-        }
-        map.put("id",user.getId());
-        map.put("nickname",user.getNickname());
-        map.put("headimgurl",user.getHeadimgurl());
-        map.put("wxCode",user.getWxCode());
-        map.put("phone",user.getPhone());
-        if(shareCount == null){
-            map.put("userLevel", "");
-        }else {
-            if (shareCount.getUserLevel() != null) {
-                map.put("userLevel", shareCount.getUserLevel());
-            } else {
+        if(user != null) {
+            map.put("id", user.getId());
+            map.put("nickname", user.getNickname());
+            map.put("headimgurl", user.getHeadimgurl());
+            map.put("wxCode", user.getWxCode());
+            map.put("phone", user.getPhone());
+            if (shareCount == null) {
                 map.put("userLevel", "");
+            } else {
+                if (shareCount.getUserLevel() != null) {
+                    map.put("userLevel", shareCount.getUserLevel());
+                } else {
+                    map.put("userLevel", "");
+                }
             }
         }
         return  map;
