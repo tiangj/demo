@@ -116,9 +116,10 @@ public class WwqUserController {
                     System.out.println("1");
                     resp.sendRedirect("http://www.wanwuquanhn.com/login");
                 }else if(StringUtils.isBlank(userInfoList.get(0).get("phone").toString())){
-                    System.out.println("2");
-                    List<Map<String, Object>> userList = (List<Map<String, Object>>) userInfoList.get(0).get("userList1");
-                    String userToken = authorHelper.setSession(userList.get(0));
+                    System.out.println("1-1");
+                    //List<Map<String, Object>> userList = (List<Map<String, Object>>) userInfoList.get(0).get("userList1");
+                    String userToken = authorHelper.setSession(userInfoList.get(0));
+                    System.out.println("1-2");
                     resp.sendRedirect("http://www.wanwuquanhn.com/?token="+userToken);
                 }
             }else{
@@ -128,15 +129,15 @@ public class WwqUserController {
                 String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="
                         + WeCahtUtils.APPID + "&secret=" + WeCahtUtils.APPSECRET
                         + "&code=" + code + "&grant_type=authorization_code";
-                System.out.println("q");
+                System.out.println("q.");
                 JSONObject jsonObject = WeCahtUtils.getJSONObject(url);
-                System.out.println("q");
+                System.out.println("q10");
                 wxLoginHelper.setUserInfo(code, jsonObject.toString());
-                System.out.println("q");
+                System.out.println("q11");
                 access_token = jsonObject.getString("access_token");
-                System.out.println("q");
+                System.out.println("q12");
                 openid = jsonObject.getString("openid");
-                System.out.println("q");
+                System.out.println("q13");
             }
             //根据openId获取用户手机号
             List<Map<String,Object>> userInfoList = wwqUserService.selectUserInfo(openid);
@@ -154,25 +155,33 @@ public class WwqUserController {
                 System.out.println("retMap =====" +userInfo);
                 //控制页面跳转
                 if (retMap == null || retMap.size() < 1) {
+                    System.out.println("q6");
                     resp.sendRedirect("http://www.wanwuquanhn.com/login");
                 } else {
                     if(Integer.parseInt(retMap.get("code").toString()) == 200){
+                        System.out.println("q7");
                         List<Map<String, Object>> userList = (List<Map<String, Object>>) retMap.get("userList1");
+                        System.out.println("q14");
                         String userToken = authorHelper.setSession(userList.get(0));
+                        System.out.println("q15");
                         resp.sendRedirect("http://www.wanwuquanhn.com/?token="+userToken);
+                        System.out.println("q16");
                     }else{
+                        System.out.println("q17");
                         // 得到用户id
                         @SuppressWarnings("unchecked")
                         List<Map<String, Object>> userList = (List<Map<String, Object>>) retMap.get("userList1");
+                        System.out.println("q18");
                         // 生成token
                         String token = authorHelper.setSession(userList.get(0));
+                        System.out.println("q19");
                         resp.sendRedirect("http://www.wanwuquanhn.com/login?token="+token);
                     }
                 }
             }else if(!StringUtils.isBlank(userInfoList.get(0).get("phone").toString())){
                 System.out.println("2");
-                List<Map<String, Object>> userList = (List<Map<String, Object>>) userInfoList.get(0).get("userList1");
-                String userToken = authorHelper.setSession(userList.get(0));
+                String userToken = authorHelper.setSession(userInfoList.get(0));
+                System.out.println("q18");
                 resp.sendRedirect("http://www.wanwuquanhn.com/?token="+userToken);
             }else{
                 System.out.println("3");
