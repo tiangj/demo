@@ -4,10 +4,7 @@ import com.example.wwq.entity.WwqRegisterOffer;
 import com.example.wwq.entity.WwqShareCount;
 import com.example.wwq.entity.WwqUser;
 import com.example.wwq.entity.WwqUserScore;
-import com.example.wwq.mapper.WwqRegisterOfferMapper;
-import com.example.wwq.mapper.WwqShareCountMapper;
-import com.example.wwq.mapper.WwqUserMapper;
-import com.example.wwq.mapper.WwqUserScoreMapper;
+import com.example.wwq.mapper.*;
 import com.example.wwq.service.IWwqUserService;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.example.wwq.wx.Util.WechatKit;
@@ -19,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.stream.FileImageOutputStream;
 import java.util.*;
 
 /**
@@ -44,6 +40,9 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
 
     @Autowired
     private WwqUserScoreMapper wwqUserScoreMapper;
+
+    @Autowired
+    private WwqShareUserConcartMapper wwqShareUserConcartMapper;
 
     @Value("${upload.file.path}")
     private String uploadFolder;
@@ -247,7 +246,7 @@ public class WwqUserServiceImpl extends ServiceImpl<WwqUserMapper, WwqUser> impl
     @Override
     public PageInfo<Map<String, Object>> userConcatList(String userId, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<Map<String,Object>> retList = wwqShareCountMapper.userConcatList(userId);
+        List<Map<String,Object>> retList = wwqShareUserConcartMapper.userConcatList(userId);
         PageInfo<Map<String,Object>> pageList = new PageInfo<Map<String,Object>>(retList);
         return pageList;
     }
