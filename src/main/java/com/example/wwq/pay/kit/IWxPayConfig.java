@@ -24,7 +24,7 @@ public interface IWxPayConfig {
 	//支付模式
 	public static String WX_WXPUBLIC_TRADE_TYPE = "JSAPI";
 	//回调地址
-	public static String    WX_WXPUBLIC_NOTITY_URL = "http://admin.zhongbohn.com/demo/wwqPay/callBack";
+	public static String    WX_WXPUBLIC_NOTITY_URL = "http://admin.wanwuquanhn.com/demo/wwqPay/callBack";
 	//验签秘钥
 	public static String WX_WXPUBLIC_PARTNER_KEY = "wanwuanquan201901128888888888888";
 
