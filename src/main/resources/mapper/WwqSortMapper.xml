@@ -26,7 +26,7 @@
 
 
     <select id="shopSortList" resultType="java.util.Map">
-          select ss.id,ss.name,ss.logo as logo from wwq_sort as ss where ss.deleteFlag = 0
+          select ss.id,ss.name,ss.logo as logo from wwq_sort as ss where ss.deleteFlag = 0 order by ss.sort
     </select>
 
 
